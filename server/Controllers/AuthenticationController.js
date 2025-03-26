@@ -31,6 +31,7 @@ async function AdminSigUp(req, res) {
   }
 }
 
+
 async function AdminLogin(req, res) {
   try {
     const { email, password } = req.body;
@@ -53,6 +54,62 @@ async function AdminLogin(req, res) {
     console.log(error);
   }
 }
+
+
+const getAdminDetails = async (req, res) => {
+  try {
+    const data = await AdminSchema.find({}, { doctorType: 1, _id: 1 });
+    const adminDetails = data.map(item => ({
+      adminId: item._id,
+      doctorType: item.doctorType
+    }));
+    return res.json(adminDetails);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to fetch admin details" });
+  }
+};
+
+
+const getAdminDetailsById = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const admin = await AdminSchema.findById(adminId).lean();
+    if (!admin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+    res.json(admin);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+
+async function updateAvailability(req, res) {
+  try {
+    const { adminId } = req.params;
+    const {  weeklyAvailability } = req.body;
+    // if (!adminId || !weeklyAvailability) {
+    //   return res.status(400).json({ error: "Missing adminId or weeklyAvailability" });
+    // }
+    const admin = await AdminSchema.findById(adminId);
+    if (!admin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+    admin.weeklyAvailability = weeklyAvailability;
+    await admin.save();
+    return res.json({ success: true, admin });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
+
+
+// -------------------------------------------------- user --------------------------------------------
 
 
 async function UserSigUp(req, res) {
@@ -110,6 +167,9 @@ async function UserLogin(req, res) {
 module.exports = {
   AdminSigUp,
   AdminLogin,
+  getAdminDetails,
+  getAdminDetailsById,
+  updateAvailability,
   UserSigUp,
   UserLogin
 };

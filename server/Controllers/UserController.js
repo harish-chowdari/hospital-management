@@ -3,12 +3,14 @@ const Appointment = require('../Models/AppointmentModel');
 
 const createAppointment = async (req, res) => {
   try {
-    const { name, symptoms, date, time, doctorType } = req.body;
+    const {userId, name, symptoms, doctorId, date, time, doctorType } = req.body;
     const newAppointment = new Appointment({
+        userId,
         name,
         symptoms,
         date,
         time,
+        doctorId,
         doctorType
     });
     if(!name || !symptoms || !date || !time || !doctorType) {
@@ -21,4 +23,21 @@ const createAppointment = async (req, res) => {
   }
 };
 
-module.exports = { createAppointment };
+
+const getAppointmentsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({ error: "Missing userId" });
+    }
+    const appointments = await Appointment.find({ userId });
+    return res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch appointments" });
+  }
+};
+
+module.exports = { 
+  createAppointment,
+  getAppointmentsByUserId 
+};

@@ -17,7 +17,7 @@ const Sidebar = () => {
             <FaListAlt className="mr-2" />
             <span>View Appointments</span>
           </li>
-          <li className="mb-4 flex items-center hover:text-green-800 cursor-pointer">
+          <li onClick={() => navigate(`/home/${adminId}/profile`)} className="mb-4 flex items-center hover:text-green-800 cursor-pointer">
             <FaCog className="mr-2" />
             <span>Settings</span>
           </li>
