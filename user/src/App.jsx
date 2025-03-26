@@ -6,6 +6,7 @@ import PasswordReset from "./Components/PasswordReset/PasswordReset";
 import AppointmentForm from "./pages/AppointForm";
 import ViewAppointments from "./pages/ViewAppointments";
 import Layout from "./layout/Layout";
+import AppointmentDetails from "./pages/AppointmentDetails";
 
 
 
@@ -20,6 +21,8 @@ const App = () => {
         <Route path="/home/:userId" element={<Layout />} >
           <Route path="appointment-form" element={<AppointmentForm />} />
           <Route path="view-appointments" element={<ViewAppointments />} />
+          {/* Add more routes for different user features */}
+          <Route path="appointment-details/:appointmentId" element={<AppointmentDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>

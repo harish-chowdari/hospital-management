@@ -7,6 +7,7 @@ import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import PasswordReset from "./components/PasswordReset/PasswordReset";
 import Profile from "./pages/Profile";
+import AppointmentDetails from "./pages/AppointmentDetails";
 
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="profile" element={<Profile/>} />
           <Route path="appointment-form" element={<ManageAppointments />} />
           <Route path="view-appointments" element={<ViewAppointments />} />
+          <Route path="appointment-details/:appointmentId" element={<AppointmentDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>

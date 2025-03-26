@@ -86,6 +86,18 @@ const getAdminDetailsById = async (req, res) => {
 };
 
 
+const getAdminsByDoctorType = async (req, res) => {
+  try {
+    const { doctorType } = req.params;
+    const admins = await AdminSchema.find({ doctorType }).lean();
+    res.json(admins);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
 
 async function updateAvailability(req, res) {
   try {
@@ -169,6 +181,7 @@ module.exports = {
   AdminLogin,
   getAdminDetails,
   getAdminDetailsById,
+  getAdminsByDoctorType,
   updateAvailability,
   UserSigUp,
   UserLogin

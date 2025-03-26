@@ -17,8 +17,11 @@ app.use("/api", AuthRoutes)
 const OtpRouter = require("./Routes/OtpRoutes") 
 app.use("/api", OtpRouter)
 
-const UserRoutes = require("./Routes/UserRoutes")
-app.use("/api", UserRoutes)
+const AppointmentRoutes = require("./Routes/AppointmentRoutes")
+app.use("/api", AppointmentRoutes)
+
+const ResourceRoutes = require("./Routes/ResourceRoutes")
+app.use("/api", ResourceRoutes)
 
 const port = process.env.PORT || 3000
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../admin/src/axios";
 
 const ViewAppointments = () => {
@@ -7,6 +7,8 @@ const ViewAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -37,9 +39,9 @@ const ViewAppointments = () => {
         <table className="min-w-full bg-white border border-gray-200">
           <thead className="bg-green-100">
             <tr>
-              <th className="px-6 py-3 border-b text-left text-sm font-bold text-green-700">
-                Name
-              </th>
+              {/* <th className="px-6 py-3 border-b text-left text-sm font-bold text-green-700">
+                Disease
+              </th> */}
               <th className="px-6 py-3 border-b text-left text-sm font-bold text-green-700">
                 Symptoms
               </th>
@@ -56,10 +58,11 @@ const ViewAppointments = () => {
           </thead>
           <tbody>
             {appointments.map((appt) => (
-              <tr key={appt._id} className="hover:bg-green-50">
-                <td className="px-6 py-4 border-b text-sm text-gray-800">
+              <tr onClick={() => { navigate(`/home/${userId}/appointment-details/${appt._id}`)}} key={appt._id} 
+                className="hover:bg-green-50 cursor-pointer">
+                {/* <td className="px-6 py-4 border-b text-sm text-gray-800">
                   {appt.name}
-                </td>
+                </td> */}
                 <td className="px-6 py-4 border-b text-sm text-gray-800">
                   {appt.symptoms}
                 </td>

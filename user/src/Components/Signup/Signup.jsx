@@ -21,7 +21,6 @@ const Signup = () => {
 
     try {
       const res = await axios.post("/user-signup", { ...signup });
-
       if (res.data.EnterAllDetails) {
         setErrorMessage(res.data.EnterAllDetails);
       } else if (res.data.AlreadyExist) {
@@ -38,54 +37,72 @@ const Signup = () => {
   };
 
   return (
-  
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-300 to-blue-700 p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white bg-opacity-90 rounded-lg p-8 shadow-lg w-96 text-center backdrop-blur-md"
-      >
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Signup</h2>
-        {errorMessage && <p className="text-red-500 mb-3">{errorMessage}</p>}
+    <div className="min-h-screen flex">
+      {/* Left side image (hidden on small screens) */}
+      <div className="hidden md:flex md:w-1/2">
+        <img
+             src="https://img.freepik.com/free-vector/people-walking-sitting-hospital-building-city-clinic-glass-exterior-flat-vector-illustration-medical-help-emergency-architecture-healthcare-concept_74855-10130.jpg?semt=ais_hybrid"
+             alt="Hospital and Patient"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-        <input
-          placeholder="Enter Your Name"
-          type="text"
-          name="name"
-          onChange={handleChange}
-          value={signup.name}
-          className="w-full p-3 mb-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 bg-white bg-opacity-80"
-        />
-        <input
-          placeholder="Enter Your Email"
-          type="email"
-          name="email"
-          onChange={handleChange}
-          value={signup.email}
-          className="w-full p-3 mb-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 bg-white bg-opacity-80"
-        />
-        <input
-          placeholder="Enter Your Password"
-          type="password"
-          name="password"
-          onChange={handleChange}
-          value={signup.password}
-          className="w-full p-3 mb-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 bg-white bg-opacity-80"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-800 text-white py-2 rounded hover:bg-blue-600 transition"
+      {/* Right side signup form */}
+      <div className="flex flex-col justify-center items-center md:w-1/2 w-full bg-green-100 p-6">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md p-8 bg-white bg-opacity-90 rounded-lg shadow-lg"
         >
-          Submit
-        </button>
+          <h2 className="text-2xl font-bold text-green-800 mb-4 text-center">
+            Signup
+          </h2>
 
-        <p className="mt-4 text-gray-700">
-          Already have an account?{" "}
-          <Link to="/" className="text-blue-500 hover:underline">
-            Login
-          </Link>
-        </p>
-      </form>
+          {errorMessage && (
+            <p className="text-green-800 text-sm text-center mb-3">
+              {errorMessage}
+            </p>
+          )}
+
+          <input
+            placeholder="Enter Your Name"
+            type="text"
+            name="name"
+            onChange={handleChange}
+            value={signup.name}
+            className="w-full p-3 mb-3 border border-green-300 rounded focus:outline-none focus:border-green-500 bg-white bg-opacity-80"
+          />
+          <input
+            placeholder="Enter Your Email"
+            type="email"
+            name="email"
+            onChange={handleChange}
+            value={signup.email}
+            className="w-full p-3 mb-3 border border-green-300 rounded focus:outline-none focus:border-green-500 bg-white bg-opacity-80"
+          />
+          <input
+            placeholder="Enter Your Password"
+            type="password"
+            name="password"
+            onChange={handleChange}
+            value={signup.password}
+            className="w-full p-3 mb-3 border border-green-300 rounded focus:outline-none focus:border-green-500 bg-white bg-opacity-80"
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-green-800 text-white py-2 rounded hover:bg-green-700 transition"
+          >
+            Submit
+          </button>
+
+          <p className="mt-4 text-center text-green-700">
+            Already have an account?{" "}
+            <Link to="/" className="text-green-600 hover:underline">
+              Login
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

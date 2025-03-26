@@ -14,11 +14,12 @@ const Profile = () => {
     Friday: [],
     Saturday: [],
   });
+  const [selectedDay, setSelectedDay] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Generate time options in 30 minute intervals from 8:00 AM to 6:00 PM
+  // Generate time options in 30-minute intervals from 8:00 AM to 6:00 PM
   const generateTimeOptions = () => {
     const options = [];
     const start = new Date();
@@ -67,14 +68,20 @@ const Profile = () => {
     fetchAdminDetails();
   }, [adminId]);
 
-  // Toggle a time slot for a given day
-  const handleCheckboxChange = (day, time) => {
+  // Handle changes for the selected day dropdown
+  const handleDayChange = (e) => {
+    setSelectedDay(e.target.value);
+  };
+
+  // Toggle a time slot for the selected day
+  const handleCheckboxChange = (time) => {
+    if (!selectedDay) return;
     setAvailability((prev) => {
-      const daySlots = prev[day];
+      const daySlots = prev[selectedDay];
       if (daySlots.includes(time)) {
-        return { ...prev, [day]: daySlots.filter((t) => t !== time) };
+        return { ...prev, [selectedDay]: daySlots.filter((t) => t !== time) };
       } else {
-        return { ...prev, [day]: [...daySlots, time] };
+        return { ...prev, [selectedDay]: [...daySlots, time] };
       }
     });
   };
@@ -84,12 +91,11 @@ const Profile = () => {
     setError("");
     setSuccess("");
 
+    // Convert availability to array format
     const availabilityArray = Object.entries(availability).map(
-      ([day, slots]) => ({
-        day,
-        slots,
-      })
+      ([day, slots]) => ({ day, slots })
     );
+
     try {
       const res = await axiosInstance.post(
         `/update-availability/${adminId}`,
@@ -110,11 +116,11 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="w-full p-6 bg-green-100 min-h-screen">
       {/* Admin Details */}
       {admin && (
-        <div className="bg-white shadow-md rounded p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4">Profile Details</h2>
+        <div className="bg-white shadow-md rounded p-6 mb-8 border border-green-300">
+          <h2 className="text-2xl font-bold mb-4 text-green-700">Profile Details</h2>
           <p className="mb-2">
             <span className="font-semibold">Name:</span> {admin.name}
           </p>
@@ -126,39 +132,68 @@ const Profile = () => {
           </p>
         </div>
       )}
+
       {/* Availability Update Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg p-8 shadow-md"
+        className="bg-white rounded-lg p-8 shadow-md border border-green-300"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">
+        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
           Update Weekly Availability
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         {success && <p className="text-green-500 text-center mb-4">{success}</p>}
-        {Object.keys(availability).map((day) => (
-          <div key={day} className="mb-4">
-            <label className="block font-semibold mb-1">{day}:</label>
-            <div className="flex flex-wrap">
-              {timeOptions.map((time) => (
-                <div key={time} className="mr-4 mb-2">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={availability[day].includes(time)}
-                      onChange={() => handleCheckboxChange(day, time)}
-                      className="form-checkbox h-4 w-4 text-blue-600"
-                    />
-                    <span className="ml-2 text-sm">{time}</span>
-                  </label>
-                </div>
+
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Left column: Day Selection */}
+          <div className="md:w-1/3">
+            <label className="block font-semibold mb-2 text-green-700">
+              Select Day
+            </label>
+            <select
+              value={selectedDay}
+              onChange={handleDayChange}
+              className="w-full p-3 border border-green-300 rounded"
+            >
+              <option value="">Select Day</option>
+              {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
+                <option key={day} value={day}>
+                  {day}
+                </option>
               ))}
-            </div>
+            </select>
           </div>
-        ))}
+
+          {/* Right column: Time Slots */}
+          <div className="md:w-2/3">
+            <label className="block font-semibold mb-2 text-green-700">
+              Available Slots
+            </label>
+            {selectedDay ? (
+              <div className="flex flex-wrap">
+                {timeOptions.map((time) => (
+                  <div key={time} className="mr-4 mb-2">
+                    <label className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={availability[selectedDay].includes(time)}
+                        onChange={() => handleCheckboxChange(time)}
+                        className="form-checkbox h-4 w-4 text-green-600"
+                      />
+                      <span className="ml-2 text-sm">{time}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600">Please select a day to view slots.</p>
+            )}
+          </div>
+        </div>
+
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition"
+          className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700 transition mt-6"
         >
           Save Availability
         </button>

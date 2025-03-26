@@ -10,7 +10,7 @@ const Navbar = () => {
         navigate("/");
     }
   return (
-    <nav className="flex sticky top-0 w-full justify-between items-center h-[7vh] bg-green-300 text-white p-4">
+    <nav className="flex sticky top-0 w-full justify-between items-center bg-green-400 text-white p-4">
       <button className="flex cursor-pointer items-center">
         <FaHome className="mr-2" />
         <span>Home</span>
