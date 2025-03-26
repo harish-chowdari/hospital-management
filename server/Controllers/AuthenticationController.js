@@ -3,7 +3,7 @@ const UserSchema = require("../Models/UserAuthModel.jsx");
 
 async function AdminSigUp(req, res) {
   try {
-    const { name, email, password } = req.body;
+    const { name, doctorType, email, password } = req.body;
 
     const isUserExist = await AdminSchema.findOne({ email: email });
 
@@ -11,12 +11,13 @@ async function AdminSigUp(req, res) {
       return res.status(200).json({ AlreadyExist: "Account already exists" });
     }
 
-    if (!name || !email || !password) {
+    if (!name || !doctorType || !email || !password) {
       return res.status(200).json({ EnterAllDetails: "Please fill all the fields" });
     }
 
     const data = new AdminSchema({
       name,
+      doctorType,
       email,
       password,
       otp: "",

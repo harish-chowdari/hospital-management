@@ -1,9 +1,11 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./Components/Login/Login";
-import Signup from "./Components/Signup/Signup";
-import PasswordReset from "./Components/PasswordReset/PasswordReset";
-import Home from "./Components/Home/Home";
+import Layout from "./layout/Layout";
+import ManageAppointments from "./pages/ManageAppointments";
+import ViewAppointments from "./pages/ViewAppointments";
+import Login from "./components/Login/Login";
+import Signup from "./components/Signup/Signup";
+import PasswordReset from "./components/PasswordReset/PasswordReset";
 
 
 const App = () => {
@@ -14,7 +16,10 @@ const App = () => {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element= {<Signup />} />
         <Route path="/reset" element= {<PasswordReset/>} />
-        <Route path="/home/:userId" element={<Home />} />
+        <Route path="/home/:adminId" element={<Layout />} >
+          <Route path="appointment-form" element={<ManageAppointments />} />
+          <Route path="view-appointments" element={<ViewAppointments />} />
+        </Route>
       </Routes>
     </BrowserRouter>
       

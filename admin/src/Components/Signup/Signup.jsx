@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Signup = () => {
   const [signup, setSignup] = useState({
     name: "",
+    doctorType: "",
     email: "",
     password: "",
   });
@@ -55,6 +56,27 @@ const Signup = () => {
           value={signup.name}
           className="w-full p-3 mb-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 bg-white bg-opacity-80"
         />
+        <select
+          name="doctorType"
+          required
+          onChange={handleChange}
+          value={signup.doctorType}
+          className="w-full p-3 mb-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 bg-white bg-opacity-80"
+        >
+          <option value="">Select Doctor Type</option>
+          <option value="General">General</option>
+          <option value="Specialist">Specialist</option>
+          <option value="Pediatrician">Pediatrician</option>
+          <option value="Oncologist">Oncologist</option>
+          <option value="Gynecologist">Gynecologist</option>
+          <option value="Dermatologist">Dermatologist</option>
+          <option value="Cardiologist">Cardiologist</option>
+          <option value="Neurologist">Neurologist</option>
+          <option value="Orthopedic">Orthopedic</option>
+          <option value="Psychiatrist">Psychiatrist</option>
+          <option value="Pulmonologist">Pulmonologist</option>
+          <option value="Surgeon">Other</option>
+        </select>
         <input
           placeholder="Enter Your Email"
           type="email"

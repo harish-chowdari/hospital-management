@@ -26,6 +26,7 @@ const Login = () => {
         setErrorMessage(res.data.Incorrect);
       } else {
         const userId = res.data._id; 
+        localStorage.setItem("userId", userId);
         navigate(`/home/${userId}`);
       }
     } catch (error) {
