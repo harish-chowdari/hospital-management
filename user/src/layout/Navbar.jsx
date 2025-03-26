@@ -12,8 +12,8 @@ const Navbar = () => {
   return (
     <nav className="flex sticky top-0 w-full justify-between items-center bg-green-400 text-white p-4">
       <button className="flex cursor-pointer items-center">
-        <FaHome className="mr-2" />
-        <span>Home</span>
+        {/* <FaHome className="mr-2" />
+        <span>Home</span> */}
       </button>
       <button onClick={handleLogout} className="flex cursor-pointer items-center">
         <FaSignOutAlt className="mr-2" />

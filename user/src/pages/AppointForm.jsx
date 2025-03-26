@@ -148,12 +148,12 @@ const AppointmentForm = () => {
  
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-green-100 p-4">
+    <div className="flex justify-center items-center min-h-[91.5vh] bg-green-100 p-4">
       <form 
         onSubmit={handleSubmit} 
-        className="bg-white rounded-lg p-8 shadow-md w-full flex flex-col max-w-md border border-green-300"
+        className="bg-white rounded-lg p-8 shadow-md w-full flex flex-col max-w-xl border border-green-300"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">Create Appointment</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">Book Appointment</h2>
         {error && <p className="text-green-600 text-center mb-4">{error}</p>}
         {success && <p className="text-green-600 text-center mb-4">{success}</p>}
         <textarea

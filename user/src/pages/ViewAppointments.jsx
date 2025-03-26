@@ -52,7 +52,10 @@ const ViewAppointments = () => {
                 Time
               </th>
               <th className="px-6 py-3 border-b text-left text-sm font-bold text-green-700">
-                Doctor Type
+                Speciality
+              </th>
+              <th className="px-6 py-3 border-b text-left text-sm font-bold text-green-700">
+                Doctor Name
               </th>
             </tr>
           </thead>
@@ -74,6 +77,9 @@ const ViewAppointments = () => {
                 </td>
                 <td className="px-6 py-4 border-b text-sm text-gray-800">
                   {appt.doctorType}
+                </td>
+                <td className="px-6 py-4 border-b text-sm text-gray-800">
+                  {appt?.doctorId?.name}
                 </td>
               </tr>
             ))}

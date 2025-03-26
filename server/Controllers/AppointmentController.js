@@ -29,7 +29,7 @@ const getAppointmentsByUserId = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "Missing userId" });
     }
-    const appointments = await Appointment.find({ userId });
+    const appointments = await Appointment.find({ userId }).populate('doctorId');
     return res.json(appointments);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch appointments" });
@@ -62,15 +62,12 @@ const getAppointmentByAppointmentId = async (req, res) => {
     if (!isExist) {
       return res.status(400).json({ error: "Appointment does not exist" });
     }
-    const appointments = await Appointment.findById(appointmentId);
+    const appointments = await Appointment.findById(appointmentId).populate("doctorId");
     return res.json(appointments);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch appointments" });
   }
 };
-
-
-
 
 
 module.exports = { 

@@ -23,7 +23,7 @@ const AppointmentDetails = () => {
     { id: 4, question: "Do you have diabetes?" },
   ]
   
-  // State to hold feedback answers (key = question id, value = "yes" or "no")
+  // State to hold feedback answers: key = question id, value = "yes" or "no"
   const [feedbackAnswers, setFeedbackAnswers] = useState({})
   const [feedbackSuccess, setFeedbackSuccess] = useState("")
   const [feedbackError, setFeedbackError] = useState("")
@@ -51,7 +51,6 @@ const AppointmentDetails = () => {
           setResourceExists(true)
         }
       } catch (err) {
-        // If not found, we assume resource doesn't exist.
         setResourceExists(false)
       }
     }
@@ -81,7 +80,6 @@ const AppointmentDetails = () => {
     }))
 
     try {
-      // Send the payload to backend (createResourse endpoint)
       const res = await axios.post(`/create-resourse`, {
         userId,
         appointmentId,
@@ -90,50 +88,54 @@ const AppointmentDetails = () => {
       if (res.data.success) {
         setFeedbackSuccess("Feedback submitted successfully!")
         setResourceExists(true)
-        // Optionally close the modal after successful submission
         setTimeout(() => setShowModal(false), 1500)
       } else {
         setFeedbackError(res.data.error || "Failed to submit feedback.")
       }
     } catch (err) {
-        console.error(err)
+      setFeedbackError("An error occurred while submitting feedback.")
     }
   }
 
   if (loading) {
-    return <div className="p-4">Loading...</div>
+    return <div className="p-4 text-center">Loading...</div>
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">{error}</div>
+    return <div className="p-4 text-red-500 text-center">{error}</div>
   }
 
   if (!appointment) {
-    return <div className="p-4">No appointment found.</div>
+    return <div className="p-4 text-center">No appointment found.</div>
   }
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded">
+    <div className=" mx-auto p-6 bg-green-100 min-h-screen">
       {/* Appointment Details */}
-      <h2 className="text-2xl font-bold mb-4 text-green-700">Appointment Details</h2>
-      <p className="mb-2">
-        <span className="font-semibold">Speciality:</span> {appointment.doctorType}
-      </p>
-      <p className="mb-2">
-        <span className="font-semibold">Date:</span> {appointment.date}
-      </p>
-      <p className="mb-2">
-        <span className="font-semibold">Time:</span> {appointment.time}
-      </p>
-      <p className="mb-2">
-        <span className="font-semibold">Symptoms:</span> {appointment.symptoms}
-      </p>
+      <div className="bg-white max-w-[100vh] mx-auto rounded-lg shadow-lg p-6 mb-8 border border-green-200">
+        <h2 className="text-3xl font-bold text-green-800 mb-4 text-center">Appointment Details</h2>
+        <p className="mb-2 text-lg">
+          <span className="font-semibold">Speciality:</span> {appointment.doctorType}
+        </p>
+        <p className="mb-2 text-lg">
+          <span className="font-semibold">Doctor Name:</span> {appointment?.doctorId?.name || "N/A"}
+        </p>
+        <p className="mb-2 text-lg">
+          <span className="font-semibold">Date:</span> {appointment.date}
+        </p>
+        <p className="mb-2 text-lg">
+          <span className="font-semibold">Time:</span> {appointment.time}
+        </p>
+        <p className="mb-2 text-lg">
+          <span className="font-semibold">Symptoms:</span> {appointment.symptoms}
+        </p>
+      </div>
       
-      {/* Feedback (Resource) Button */}
-      <div className="mt-8">
+      {/* Resource (Feedback) Button */}
+      <div className="mb-8 text-center">
         {resourceExists ? (
           <button
-            className="w-full bg-gray-400 text-white py-2 rounded cursor-not-allowed"
+            className="w-full max-w-xs bg-gray-400 text-white py-3 rounded cursor-not-allowed"
             disabled
           >
             Resource already submitted
@@ -141,60 +143,59 @@ const AppointmentDetails = () => {
         ) : (
           <button
             onClick={() => setShowModal(true)}
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+            className="w-full cursor-pointer max-w-xs bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
           >
             Give Resource
           </button>
         )}
       </div>
-      
-      {/* Modal for Feedback Form */}
+
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div 
             className="absolute inset-0 bg-black opacity-50" 
             onClick={() => setShowModal(false)}
           ></div>
-          <div className="bg-white p-6 rounded shadow-lg z-10 max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4 text-green-700">Feedback</h3>
+          <div className="bg-white p-8 rounded-lg shadow-xl z-10 max-w-lg w-full">
+            <h3 className="text-2xl font-bold mb-6 text-green-700 text-center">Resource</h3>
             <form onSubmit={handleFeedbackSubmit}>
               {feedbackQuestions.map((q) => (
-                <div key={q.id} className="mb-4">
-                  <p className="mb-2">{q.question}</p>
-                  <div className="flex items-center">
-                    <label className="mr-4">
+                <div key={q.id} className="mb-6">
+                  <p className="text-lg font-medium mb-2">{q.question}</p>
+                  <div className="flex space-x-6">
+                    <label className="flex items-center">
                       <input
                         type="radio"
                         name={`question-${q.id}`}
                         value="yes"
                         checked={feedbackAnswers[q.id] === "yes"}
                         onChange={() => handleFeedbackChange(q.id, "yes")}
-                        className="mr-1"
+                        className="mr-2"
                       />
-                      Yes
+                      <span className="text-lg">Yes</span>
                     </label>
-                    <label>
+                    <label className="flex items-center">
                       <input
                         type="radio"
                         name={`question-${q.id}`}
                         value="no"
                         checked={feedbackAnswers[q.id] === "no"}
                         onChange={() => handleFeedbackChange(q.id, "no")}
-                        className="mr-1"
+                        className="mr-2"
                       />
-                      No
+                      <span className="text-lg">No</span>
                     </label>
                   </div>
                 </div>
               ))}
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+                className="w-full cursor-pointer bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
               >
                 Submit Resource
               </button>
-              {feedbackSuccess && <p className="text-green-600 mt-4">{feedbackSuccess}</p>}
-              {feedbackError && <p className="text-red-500 mt-4">{feedbackError}</p>}
+              {feedbackSuccess && <p className="text-green-600 mt-4 text-center">{feedbackSuccess}</p>}
+              {feedbackError && <p className="text-red-500 mt-4 text-center">{feedbackError}</p>}
             </form>
           </div>
         </div>

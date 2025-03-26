@@ -21,6 +21,7 @@ const AppointmentDetails = () => {
         setResource(resResource.data)
       } catch (err) {
         console.error(err)
+        // setError("Failed to fetch appointment or resource details.")
       } finally {
         setLoading(false)
       }
@@ -29,48 +30,65 @@ const AppointmentDetails = () => {
   }, [appointmentId])
 
   if (loading) {
-    return <div className="p-4">Loading...</div>
+    return <div className="p-4 text-center">Loading...</div>
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">{error}</div>
+    return <div className="p-4 text-red-500 text-center">{error}</div>
   }
 
   if (!appointment) {
-    return <div className="p-4">No appointment found.</div>
+    return <div className="p-4 text-center">No appointment found.</div>
   }
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded">
-      <h2 className="text-2xl font-bold mb-4 text-green-700">Appointment Details</h2>
-      <p className="mb-2">
-        <span className="font-semibold">Speciality:</span> {appointment.doctorType}
-      </p>
-      <p className="mb-2">
-        <span className="font-semibold">Date:</span> {appointment.date}
-      </p>
-      <p className="mb-2">
-        <span className="font-semibold">Time:</span> {appointment.time}
-      </p>
-      <p className="mb-2">
-        <span className="font-semibold">Symptoms:</span> {appointment.symptoms}
-      </p>
-      
-      <hr className="my-6" />
-      
-      <h3 className="text-xl font-semibold mb-4">Resource Details</h3>
-      {resource && resource?.quiz && resource?.quiz?.length > 0 ? (
-        <div>
-          {resource?.quiz?.map((item, index) => (
-            <div key={index} className="mb-4">
-              <p className="font-semibold">Does patient has {item?.question?.slice(11, item?.question?.length)}</p>
-              <p className="ml-4">Answer: {item?.answer?.charAt(0).toUpperCase() + item?.answer?.slice(1)}</p>
-            </div>
-          ))}
+    <div className="mx-auto p-6 bg-green-100 min-h-screen">
+      <div className="bg-white rounded-lg shadow-xl p-8 border border-green-200">
+        <h2 className="text-3xl font-bold text-green-800 mb-6 text-center">
+          Appointment Details
+        </h2>
+        <div className="mb-2">
+          <p className="text-lg">
+            <span className="font-semibold">Speciality:</span> {appointment.doctorType}
+          </p>
         </div>
-      ) : (
-        <p>No resources found for this appointment.</p>
-      )}
+        <div className="mb-2 flex justify-between">
+          <p className="text-lg">
+            <span className="font-semibold">Date:</span> {appointment.date}
+          </p>
+          <p className="text-lg">
+            <span className="font-semibold">Time:</span> {appointment.time}
+          </p>
+        </div>
+        <div className="mb-2">
+          <p className="text-lg">
+            <span className="font-semibold">Symptoms:</span> {appointment.symptoms}
+          </p>
+        </div>
+        <hr className="my-4 border-green-200" />
+        <h3 className="text-2xl font-semibold text-green-700 mb-4">
+          Resource (Quiz) Details
+        </h3>
+        {resource && resource.quiz && resource.quiz.length > 0 ? (
+          <div className="space-y-4">
+            {resource.quiz.map((item, index) => (
+              <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-300">
+                <p className="font-semibold text-green-800">
+                  {`Does patient ${item.question.slice(7)}`}
+                </p>
+                <p className="ml-4 text-lg">
+                  Answer:{" "}
+                  <span className="font-medium">
+                    {item.answer.charAt(0).toUpperCase() + item.answer.slice(1)}
+                  </span>
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-lg text-gray-600">No resources found for this appointment.</p>
+        )}
+      </div>
     </div>
   )
 }
