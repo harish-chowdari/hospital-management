@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../../../admin/src/axios";
+import axiosInstance from "../axios";
 
 const ViewAppointments = () => {
   const { userId } = useParams();

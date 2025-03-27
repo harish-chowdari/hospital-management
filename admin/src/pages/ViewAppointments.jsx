@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
-import axiosInstance from "../../../admin/src/axios";
+import axiosInstance from "../axios";
 
 const ViewAppointments = () => {
   const { adminId } = useParams();
