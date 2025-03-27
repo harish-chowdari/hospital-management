@@ -18,7 +18,7 @@ const createAppointment = async (req, res) => {
     const savedAppointment = await newAppointment.save();
     return res.status(201).json({ success: "Appointment created successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to create appointment" });
+    return res.status(500).json({ error: "Failed to create appointment" });
   }
 };
 
@@ -32,7 +32,7 @@ const getAppointmentsByUserId = async (req, res) => {
     const appointments = await Appointment.find({ userId }).populate('doctorId');
     return res.json(appointments);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch appointments" });
+    return res.status(500).json({ error: "Failed to fetch appointments" });
   }
 };
 
@@ -48,7 +48,7 @@ const getAppointmentsByDoctorId = async (req, res) => {
     const appointments = await Appointment.find({ doctorId, status: { $ne: "deleted" } }).populate('userId');
     return res.json(appointments);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch appointments" });
+    return res.status(500).json({ error: "Failed to fetch appointments" });
   }
 };
 
@@ -67,7 +67,7 @@ const getAppointmentByAppointmentId = async (req, res) => {
     const appointments = await Appointment.findById(appointmentId).populate("doctorId");
     return res.json(appointments);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch appointments" });
+    return res.status(500).json({ error: "Failed to fetch appointments" });
   }
 };
 
@@ -87,7 +87,7 @@ const deleteAppointment = async (req, res) => {
     await appointment.save();
     return res.json({ success: "Appointment marked as deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to mark appointment as deleted" });
+    return res.status(500).json({ error: "Failed to mark appointment as deleted" });
   }
 };
 
@@ -102,13 +102,14 @@ const updateAppointment = async (req, res) => {
     if (!isExist) {
       return res.status(400).json({ error: "Appointment does not exist" });
     }
-    const { userId, symptoms, doctorId, date, time, doctorType } = req.body;
-    const updatedAppointment = await Appointment.findByIdAndUpdate(appointmentId, { userId, symptoms, doctorId, date, time, doctorType }, { new: true });
+    const { userId, symptoms, doctorId, date, time, doctorType, status } = req.body;
+    const updatedAppointment = await Appointment.findByIdAndUpdate(appointmentId, { userId, symptoms, doctorId, date, time, doctorType, status }, { new: true });
     return res.json(updatedAppointment);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update appointment" });
+    return res.status(500).json({ error: "Failed to update appointment" });
   }
 };
+
 
 module.exports = { 
   createAppointment,

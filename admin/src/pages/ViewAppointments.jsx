@@ -53,11 +53,21 @@ const ViewAppointments = () => {
   };
 
   const handleSave = async (appointmentId) => {
+    // Find the original appointment data
+    const original = appointments.find((appt) => appt._id === appointmentId);
+    
+    // If nothing has changed, exit edit mode without calling the API
+    if (original.date === editedDate && original.time === editedTime) {
+      handleCancel();
+      return;
+    }
+
     try {
       // Update only date and time in the backend
       await axiosInstance.put(`/update-appointment/${appointmentId}`, {
         date: editedDate,
         time: editedTime,
+        status: "Updated"
       });
       // Update the local state with the updated appointment
       setAppointments(
@@ -65,9 +75,7 @@ const ViewAppointments = () => {
           appt._id === appointmentId ? { ...appt, date: editedDate, time: editedTime } : appt
         )
       );
-      setEditingId(null);
-      setEditedDate("");
-      setEditedTime("");
+      handleCancel();
     } catch (err) {
       console.error("Update failed", err);
     }

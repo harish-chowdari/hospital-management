@@ -8,7 +8,7 @@ const Layout = () => {
     <div className="bg-white">
         <div className="fixed"><Sidebar /></div>
       <div className="flex flex-col">
-      <div className="ml-[40vh] sticky top-0 shadow-sm h-[8.5vh]"><Navbar /></div>
+      <div className="sticky top-0 shadow-sm h-[8.5vh]"><Navbar /></div>
         <main className="flex-1 ml-[40vh]">
           <Outlet />
         </main>
