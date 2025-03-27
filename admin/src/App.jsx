@@ -3,9 +3,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./layout/Layout";
 import ManageAppointments from "./pages/ManageAppointments";
 import ViewAppointments from "./pages/ViewAppointments";
-import Login from "./components/Login/Login";
-import Signup from "./components/Signup/Signup";
-import PasswordReset from "./components/PasswordReset/PasswordReset";
+import Login from "./Components/Login/Login";
+import Signup from "./Components/Signup/Signup";
+import PasswordReset from "./Components/PasswordReset/PasswordReset";
 import Profile from "./pages/Profile";
 import AppointmentDetails from "./pages/AppointmentDetails";
 
