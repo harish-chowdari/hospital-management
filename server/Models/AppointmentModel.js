@@ -24,8 +24,10 @@ const AppointmentSchema = new mongoose.Schema({
     doctorType: {
         type: String,
         required: true,
-    }
-    // Add other fields as needed
+    },
+    status: {
+        type: String,
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', AppointmentSchema);

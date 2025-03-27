@@ -40,16 +40,18 @@ const getAppointmentsByUserId = async (req, res) => {
 
 const getAppointmentsByDoctorId = async (req, res) => {
   try {
-      const { doctorId } = req.params;
-      if (!doctorId) {
-      return res.status(400).json({ error: "Missing userId" });
-      }
-      const appointments = await Appointment.find({ doctorId }).populate('userId');
-      return res.json(appointments);
+    const { doctorId } = req.params;
+    if (!doctorId) {
+      return res.status(400).json({ error: "Missing doctorId" });
+    }
+    // Only return appointments that are not marked as deleted
+    const appointments = await Appointment.find({ doctorId, status: { $ne: "deleted" } }).populate('userId');
+    return res.json(appointments);
   } catch (error) {
-      res.status(500).json({ error: "Failed to fetch appointments" });
+    res.status(500).json({ error: "Failed to fetch appointments" });
   }
 };
+
 
 
 const getAppointmentByAppointmentId = async (req, res) => {
@@ -70,9 +72,49 @@ const getAppointmentByAppointmentId = async (req, res) => {
 };
 
 
+const deleteAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    if (!appointmentId) {
+      return res.status(400).json({ error: "Missing appointmentId" });
+    }
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) {
+      return res.status(400).json({ error: "Appointment does not exist" });
+    }
+    // Instead of deleting, update the status to "deleted"
+    appointment.status = "deleted";
+    await appointment.save();
+    return res.json({ success: "Appointment marked as deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to mark appointment as deleted" });
+  }
+};
+
+
+const updateAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    if (!appointmentId) {
+      return res.status(400).json({ error: "Missing appointmentId" });
+    }
+    const isExist = await Appointment.findById(appointmentId);
+    if (!isExist) {
+      return res.status(400).json({ error: "Appointment does not exist" });
+    }
+    const { userId, symptoms, doctorId, date, time, doctorType } = req.body;
+    const updatedAppointment = await Appointment.findByIdAndUpdate(appointmentId, { userId, symptoms, doctorId, date, time, doctorType }, { new: true });
+    return res.json(updatedAppointment);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update appointment" });
+  }
+};
+
 module.exports = { 
   createAppointment,
   getAppointmentsByUserId,
   getAppointmentsByDoctorId,
   getAppointmentByAppointmentId,
+  deleteAppointment,
+  updateAppointment
 };

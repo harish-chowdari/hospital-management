@@ -57,6 +57,9 @@ const ViewAppointments = () => {
               <th className="px-6 py-3 border-b text-left text-sm font-bold text-green-700">
                 Doctor Name
               </th>
+              <th className="px-6 py-3 border-b text-left text-sm font-bold text-green-700">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -80,6 +83,9 @@ const ViewAppointments = () => {
                 </td>
                 <td className="px-6 py-4 border-b text-sm text-gray-800">
                   {appt?.doctorId?.name}
+                </td>
+                <td className={`px-6 py-4 border-b border-b-gray-800 text-sm text-gray-800 ${appt.status === "deleted" ? "text-red-600" : "text-green-600"}`}>
+                  {appt?.status?.charAt(0).toUpperCase() + appt?.status?.slice(1) || "Open"}
                 </td>
               </tr>
             ))}
