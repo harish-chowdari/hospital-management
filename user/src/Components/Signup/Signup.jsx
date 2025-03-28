@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "../../axios";
 import { Link, useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const Signup = () => {
   const [signup, setSignup] = useState({
@@ -11,6 +12,8 @@ const Signup = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleChange = (e) => {
     setSignup({ ...signup, [e.target.name]: e.target.value });
   };
@@ -20,6 +23,7 @@ const Signup = () => {
     setErrorMessage("");
 
     try {
+      setIsLoading(true);
       const res = await axios.post("/user-signup", { ...signup });
       if (res.data.EnterAllDetails) {
         setErrorMessage(res.data.EnterAllDetails);
@@ -33,6 +37,8 @@ const Signup = () => {
     } catch (error) {
       console.log(error);
       setErrorMessage("An error occurred while signing up. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -90,9 +96,10 @@ const Signup = () => {
 
           <button
             type="submit"
-            className="w-full bg-green-800 text-white py-2 rounded hover:bg-green-700 transition"
+            className={`w-full bg-green-800 ${isLoading ? "cursor-not-allowed opacity-70" : "cursor-pointer"} text-white py-2 flex items-center justify-center rounded hover:bg-green-700 transition-all`}
           >
-            Submit
+            {isLoading ? "" : "Signup"}{" "}
+            {isLoading && <Loader2 className="animate-spin w-5 h-5" />}
           </button>
 
           <p className="mt-4 text-center text-green-700">

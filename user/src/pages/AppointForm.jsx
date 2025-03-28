@@ -17,12 +17,13 @@ const AppointmentForm = () => {
   const [doctorList, setDoctorList] = useState([]);
   const [doctorAvailability, setDoctorAvailability] = useState(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    setFormData({ ...formData, date:"", time:"", });
-  }, [formData?.doctorId, formData?.doctorType]);
+    setFormData({ ...formData, date: "", time: "" });
+  }, [formData.doctorId, formData.doctorType]);
 
   // Fetch list of admins to get specialties
   useEffect(() => {
@@ -116,14 +117,41 @@ const AppointmentForm = () => {
     });
   };
 
+  // Fetch existing appointments by user ID so we can check for duplicates
+  const getAppointmentsByUserId = async () => {
+    try {
+      const res = await axiosInstance.get(`/get-appointments/${userId}`);
+      setAppointments(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAppointmentsByUserId();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
+    // Check for duplicate appointment for the same date, time, and doctor.
+    const duplicate = appointments.find(appt => 
+      appt.doctorId?._id === formData.doctorId &&
+      appt.date === formData.date &&
+      appt.time === formData.time &&
+      // Optionally ignore appointments with status "deleted"
+      appt.status !== "deleted"
+    );
+
+    if (duplicate) {
+      setError("You have already booked this slot");
+      return;
+    }
+
     const appointmentData = {
       userId: userId,
-      name: formData.name,
       symptoms: formData.symptoms,
       doctorId: formData.doctorId,
       doctorType: formData.doctorType,
@@ -138,14 +166,22 @@ const AppointmentForm = () => {
       }
       if (res?.data?.success) {
         setSuccess("Appointment created successfully");
+        // Clear form after successful submission
+        setFormData({
+          userId: "",
+          symptoms: "",
+          doctorId: "",
+          doctorType: "",
+          date: "",
+          time: ""
+        });
+        // Optionally refresh the appointments list
+        getAppointmentsByUserId();
       }
     } catch (err) {
       setError("Failed to create appointment");
     }
   };
-
-
- 
 
   return (
     <div className="flex justify-center items-center min-h-[91.5vh] bg-green-100 p-4">
@@ -154,7 +190,7 @@ const AppointmentForm = () => {
         className="bg-white rounded-lg p-8 shadow-md w-full flex flex-col max-w-xl border border-green-300"
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-green-700">Book Appointment</h2>
-        {error && <p className="text-green-600 text-center mb-4">{error}</p>}
+        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         {success && <p className="text-green-600 text-center mb-4">{success}</p>}
         <textarea
           type="text"
@@ -203,7 +239,7 @@ const AppointmentForm = () => {
           name="date"
           value={formData.date}
           onChange={handleChange}
-          className="w-full p-3 border border-green-300 rounded mb-4"
+          className={`w-full p-3 border border-green-300 rounded mb-4 ${(!formData.doctorId || !formData.doctorType) ? "opacity-50 cursor-not-allowed" : ""}`}
         />
 
         {/* If a date is selected */}

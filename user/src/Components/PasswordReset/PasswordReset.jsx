@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "../../axios";
 import { Link, useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const PasswordReset = () => {
   const [login, setLogin] = useState({ email: "", otp: "", newPassword: "" });
@@ -107,12 +108,12 @@ const PasswordReset = () => {
 
         <button
           type="submit"
-          className={`w-full bg-green-800 text-white py-2 rounded hover:bg-green-700 transition-all ${
-            isLoading ? "cursor-not-allowed" : "cursor-pointer"
+          className={`w-full bg-green-800 text-white flex items-center justify-center py-2 rounded hover:bg-green-700 transition-all ${
+            isLoading ? "cursor-not-allowed opacity-70" : "cursor-pointer"
           }`}
           disabled={isLoading}
         >
-          {isOTPSent ? "Reset Password" : isLoading ? "Sending OTP..." : "Send OTP"}
+          {isOTPSent ? isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : "Reset Password" : isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : "Send OTP"}
         </button>
 
         <p className="mt-4 text-green-700">
