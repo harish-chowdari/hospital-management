@@ -6,13 +6,14 @@ const AppointmentDetails = () => {
   const { appointmentId } = useParams()
   const userId = localStorage.getItem('userId')
   const [appointment, setAppointment] = useState(null)
+  const [resource, setResource] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   
-  // Check if resource (quiz) already exists
+  // Check if resource (feedback/quiz) already exists
   const [resourceExists, setResourceExists] = useState(false)
   
-  // Modal control state
+  // Modal control state for submitting resource
   const [showModal, setShowModal] = useState(false)
   
   // Define multiple feedback questions
@@ -28,6 +29,7 @@ const AppointmentDetails = () => {
   const [feedbackSuccess, setFeedbackSuccess] = useState("")
   const [feedbackError, setFeedbackError] = useState("")
 
+  // Fetch appointment details
   useEffect(() => {
     const fetchAppointment = async () => {
       try {
@@ -42,12 +44,13 @@ const AppointmentDetails = () => {
     fetchAppointment()
   }, [appointmentId])
 
-  // Check if a resource already exists for this appointment
+  // Fetch resource details and check if a resource exists for this appointment
   useEffect(() => {
     const checkResource = async () => {
       try {
         const res = await axios.get(`/get-resource/${appointmentId}`)
         if (res.data && res.data._id) {
+          setResource(res.data)
           setResourceExists(true)
         }
       } catch (err) {
@@ -86,14 +89,16 @@ const AppointmentDetails = () => {
         quiz: quizPayload
       })
       if (res.data.success) {
-        setFeedbackSuccess("Feedback submitted successfully!")
+        setFeedbackSuccess("Resource submitted successfully!")
         setResourceExists(true)
+        // Optionally, set the resource details so they can be shown immediately
+        setResource({ quiz: quizPayload })
         setTimeout(() => setShowModal(false), 1500)
       } else {
-        setFeedbackError(res.data.error || "Failed to submit feedback.")
+        setFeedbackError(res.data.error || "Failed to submit Resource.")
       }
     } catch (err) {
-      setFeedbackError("An error occurred while submitting feedback.")
+      setFeedbackError("An error occurred while submitting Resource.")
     }
   }
 
@@ -110,7 +115,7 @@ const AppointmentDetails = () => {
   }
 
   return (
-    <div className=" mx-auto p-6 bg-green-100 min-h-screen">
+    <div className="mx-auto p-6 bg-green-100 min-h-screen">
       {/* Appointment Details */}
       <div className="bg-white max-w-[100vh] mx-auto rounded-lg shadow-lg p-6 mb-8 border border-green-200">
         <h2 className="text-3xl font-bold text-green-800 mb-4 text-center">Appointment Details</h2>
@@ -150,6 +155,31 @@ const AppointmentDetails = () => {
         )}
       </div>
 
+      {/* Show submitted resource details if available */}
+      {resourceExists && resource && resource.quiz && resource.quiz.length > 0 && (
+        <div className="bg-white rounded-lg shadow-xl p-8 border border-green-200 mt-8">
+          <h3 className="text-2xl font-semibold text-green-700 mb-4 text-center">
+            Submitted Resource Details
+          </h3>
+          <div className="space-y-4">
+            {resource.quiz.map((item, index) => (
+              <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-300">
+                <p className="font-semibold text-green-800">
+                  {item.question}
+                </p>
+                <p className="ml-4 text-lg">
+                  Answer:{" "}
+                  <span className="font-medium">
+                    {item.answer.charAt(0).toUpperCase() + item.answer.slice(1)}
+                  </span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Resource Submission Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div 

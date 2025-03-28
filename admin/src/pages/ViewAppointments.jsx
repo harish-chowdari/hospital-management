@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
 import axiosInstance from "../axios";
 
@@ -8,6 +8,7 @@ const ViewAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
   
   // State to track which appointment is being edited
   const [editingId, setEditingId] = useState(null);
@@ -111,11 +112,14 @@ const ViewAppointments = () => {
               <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
                 Delete
               </th>
+              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
+                View Details
+              </th>
             </tr>
           </thead>
           <tbody>
             {appointments.map((appt) => (
-              <tr key={appt?._id} className="hover:bg-green-50">
+              <tr  key={appt?._id} className="hover:bg-green-50">
                 <td className="px-4 py-4 border-b text-sm text-gray-800">
                   {appt?.symptoms}
                 </td>
@@ -177,6 +181,14 @@ const ViewAppointments = () => {
                     onClick={() => handleDelete(appt._id)}
                   >
                     <FaTrash />
+                  </button>
+                </td>
+                <td className="px-4 py-4 border-b text-sm text-gray-800">
+                  <button
+                    className="bg-green-500 cursor-pointer text-white px-4 py-2 rounded hover:bg-green-600"
+                    onClick={() => navigate(`/home/${adminId}/appointment-details/${appt._id}`)}
+                  >
+                    View Details
                   </button>
                 </td>
               </tr>
