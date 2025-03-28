@@ -7,7 +7,7 @@ const timeOutMessage = "Request took too long to complete. Please try again late
 
 const axiosInstance=axios.create({
     baseURL:BASE_URL,
-    timeout: 5000,
+    timeout: 100000,
     timeoutErrorMessage: timeOutMessage,
 });
 
