@@ -13,10 +13,11 @@ const AppointmentDetails = () => {
   // Check if resource (feedback/quiz) already exists
   const [resourceExists, setResourceExists] = useState(false)
   
-  // Modal control state for submitting resource
-  const [showModal, setShowModal] = useState(false)
+  // Modal control state for resource submission and prescription viewing
+  const [showResourceModal, setShowResourceModal] = useState(false)
+  const [showPrescriptionModal, setShowPrescriptionModal] = useState(false)
   
-  // Define multiple feedback questions
+  // Define feedback questions for resource submission
   const feedbackQuestions = [
     { id: 1, question: "Do you have obesity?" },
     { id: 2, question: "Do you have low blood pressure?" },
@@ -24,7 +25,7 @@ const AppointmentDetails = () => {
     { id: 4, question: "Do you have diabetes?" },
   ]
   
-  // State to hold feedback answers: key = question id, value = "yes" or "no"
+  // State to hold feedback answers
   const [feedbackAnswers, setFeedbackAnswers] = useState({})
   const [feedbackSuccess, setFeedbackSuccess] = useState("")
   const [feedbackError, setFeedbackError] = useState("")
@@ -69,14 +70,14 @@ const AppointmentDetails = () => {
     setFeedbackError("")
     setFeedbackSuccess("")
 
-    // Front-end validation: ensure every question has an answer
+    // Validate that every question has an answer
     const unanswered = feedbackQuestions.filter(q => !feedbackAnswers[q.id])
     if (unanswered.length > 0) {
       setFeedbackError("Please answer all questions.")
       return
     }
 
-    // Build quiz payload as an array of objects
+    // Build quiz payload
     const quizPayload = feedbackQuestions.map(q => ({
       question: q.question,
       answer: feedbackAnswers[q.id]
@@ -91,9 +92,8 @@ const AppointmentDetails = () => {
       if (res.data.success) {
         setFeedbackSuccess("Resource submitted successfully!")
         setResourceExists(true)
-        // Optionally, set the resource details so they can be shown immediately
         setResource({ quiz: quizPayload })
-        setTimeout(() => setShowModal(false), 1500)
+        setTimeout(() => setShowResourceModal(false), 1500)
       } else {
         setFeedbackError(res.data.error || "Failed to submit Resource.")
       }
@@ -114,11 +114,20 @@ const AppointmentDetails = () => {
     return <div className="p-4 text-center">No appointment found.</div>
   }
 
+  // Helper to display yes/no as tick/cross with color
+  const displayYesNo = (val) => {
+    return val 
+      ? <span className="text-green-600 font-bold">✔️</span>
+      : <span className="text-red-600 font-bold">❌</span>
+  }
+
   return (
     <div className="mx-auto p-6 bg-green-100 min-h-screen">
       {/* Appointment Details */}
-      <div className="bg-white max-w-[100vh] mx-auto rounded-lg shadow-lg p-6 mb-8 border border-green-200">
-        <h2 className="text-3xl font-bold text-green-800 mb-4 text-center">Appointment Details</h2>
+      <div className="bg-white max-w-3xl mx-auto rounded-lg shadow-lg p-6 mb-8 border border-green-200 relative">
+        <h2 className="text-3xl font-bold text-green-800 mb-4 text-center">
+          Appointment Details
+        </h2>
         <p className="mb-2 text-lg">
           <span className="font-semibold">Speciality:</span> {appointment.doctorType}
         </p>
@@ -134,6 +143,17 @@ const AppointmentDetails = () => {
         <p className="mb-2 text-lg">
           <span className="font-semibold">Symptoms:</span> {appointment.symptoms}
         </p>
+        {/* Show See Prescription button within the appointment details card */}
+        {appointment.prescriptionDetails && appointment.prescriptionDetails.length > 0 && (
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setShowPrescriptionModal(true)}
+              className="w-full max-w-xs bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
+            >
+              See Prescription
+            </button>
+          </div>
+        )}
       </div>
       
       {/* Resource (Feedback) Button */}
@@ -147,7 +167,7 @@ const AppointmentDetails = () => {
           </button>
         ) : (
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowResourceModal(true)}
             className="w-full cursor-pointer max-w-xs bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
           >
             Give Resource
@@ -155,7 +175,7 @@ const AppointmentDetails = () => {
         )}
       </div>
 
-      {/* Show submitted resource details if available */}
+      {/* Submitted Resource Details */}
       {resourceExists && resource && resource.quiz && resource.quiz.length > 0 && (
         <div className="bg-white rounded-lg shadow-xl p-8 border border-green-200 mt-8">
           <h3 className="text-2xl font-semibold text-green-700 mb-4 text-center">
@@ -164,12 +184,9 @@ const AppointmentDetails = () => {
           <div className="space-y-4">
             {resource.quiz.map((item, index) => (
               <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-300">
-                <p className="font-semibold text-green-800">
-                  {item.question}
-                </p>
+                <p className="font-semibold text-green-800">{item.question}</p>
                 <p className="ml-4 text-lg">
-                  Answer:{" "}
-                  <span className="font-medium">
+                  Answer: <span className="font-medium">
                     {item.answer.charAt(0).toUpperCase() + item.answer.slice(1)}
                   </span>
                 </p>
@@ -179,12 +196,61 @@ const AppointmentDetails = () => {
         </div>
       )}
 
-      {/* Resource Submission Modal */}
-      {showModal && (
+      {/* Prescription Modal Popup */}
+      {showPrescriptionModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div 
             className="absolute inset-0 bg-black opacity-50" 
-            onClick={() => setShowModal(false)}
+            onClick={() => setShowPrescriptionModal(false)}
+          ></div>
+          <div className="bg-white p-8 rounded-lg shadow-2xl z-10 max-w-3xl w-full border-t-4 border-green-600">
+            <h3 className="text-2xl font-bold mb-6 text-green-700 text-center">Prescription Details</h3>
+            <table className="w-full table-auto border-collapse">
+              <thead>
+                <tr>
+                  <th className="border p-2 bg-green-100">Medicine Name</th>
+                  <th className="border p-2 bg-green-100">Before Breakfast</th>
+                  <th className="border p-2 bg-green-100">After Breakfast</th>
+                  <th className="border p-2 bg-green-100">Before Lunch</th>
+                  <th className="border p-2 bg-green-100">After Lunch</th>
+                  <th className="border p-2 bg-green-100">Before Dinner</th>
+                  <th className="border p-2 bg-green-100">After Dinner</th>
+                  <th className="border p-2 bg-green-100">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointment.prescriptionDetails.map((pres, index) => (
+                  <tr key={index}>
+                    <td className="border p-2">{pres.medicineName}</td>
+                    <td className="border p-2 text-center">{displayYesNo(pres.beforeBreakfast)}</td>
+                    <td className="border p-2 text-center">{displayYesNo(pres.afterBreakfast)}</td>
+                    <td className="border p-2 text-center">{displayYesNo(pres.beforeLunch)}</td>
+                    <td className="border p-2 text-center">{displayYesNo(pres.afterLunch)}</td>
+                    <td className="border p-2 text-center">{displayYesNo(pres.beforeDinner)}</td>
+                    <td className="border p-2 text-center">{displayYesNo(pres.afterDinner)}</td>
+                    <td className="border p-2 text-center">{pres.duration}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => setShowPrescriptionModal(false)}
+                className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Resource Submission Modal */}
+      {showResourceModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div 
+            className="absolute inset-0 bg-black opacity-50" 
+            onClick={() => setShowResourceModal(false)}
           ></div>
           <div className="bg-white p-8 rounded-lg shadow-xl z-10 max-w-lg w-full">
             <h3 className="text-2xl font-bold mb-6 text-green-700 text-center">Resource</h3>

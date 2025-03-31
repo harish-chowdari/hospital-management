@@ -7,15 +7,12 @@ const AppointmentSchema = new mongoose.Schema({
     },
     symptoms: {
         type: String,
-        required: true,
     },
     date: {
         type: String,
-        required: true,
     },
     time: {
         type: String,
-        required: true,
     },
     doctorId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -23,11 +20,40 @@ const AppointmentSchema = new mongoose.Schema({
     },
     doctorType: {
         type: String,
-        required: true,
     },
     status: {
         type: String,
     },
+    isMailSent: {
+        type: Boolean,
+        default: false,
+    },
+    prescriptionDetails: [{
+        medicineName: {
+            type: String,
+        },
+        beforeBreakfast: {
+            type: Boolean,
+        },
+        afterBreakfast: {
+            type: Boolean,
+        },
+        beforeLunch: {
+            type: Boolean,
+        },
+        afterLunch: {
+            type: Boolean,
+        },
+        beforeDinner: {
+            type: Boolean,
+        },
+        afterDinner: {
+            type: Boolean,
+        },
+        duration: {
+            type: String,
+        },
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', AppointmentSchema);
