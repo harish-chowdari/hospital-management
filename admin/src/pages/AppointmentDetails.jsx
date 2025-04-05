@@ -170,10 +170,9 @@ const AppointmentDetails = () => {
         )}
       </div>
 
-      {/* Resource (Quiz) Section */}
       <div className="mt-8 bg-white max-w-3xl mx-auto rounded-lg shadow-lg p-8 border border-green-200">
         <h3 className="text-2xl font-semibold text-green-700 mb-4 text-center">
-          Resource (Quiz) Details
+          Resource Details
         </h3>
         {resource && resource.quiz && resource.quiz.length > 0 ? (
           <div className="space-y-4">

@@ -21,6 +21,8 @@ const AppointmentForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const theme = localStorage.getItem("theme") || "light";
+
   useEffect(() => {
     setFormData({ ...formData, date: "", time: "" });
   }, [formData.doctorId, formData.doctorType]);
@@ -184,29 +186,58 @@ const AppointmentForm = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[91.5vh] bg-green-100 p-4">
-      <form 
-        onSubmit={handleSubmit} 
-        className="bg-white rounded-lg p-8 shadow-md w-full flex flex-col max-w-xl border border-green-300"
+    <div
+      className={`flex justify-center items-center min-h-[91.5vh] p-4 ${
+        theme === "dark" ? "bg-gray-900" : "bg-green-100"
+      }`}
+    >
+      <form
+        onSubmit={handleSubmit}
+        className={`rounded-lg p-8 shadow-md w-full flex flex-col max-w-xl border ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-700"
+            : "bg-white border border-green-300"
+        }`}
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">Book Appointment</h2>
-        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-600 text-center mb-4">{success}</p>}
+        <h2
+          className={`text-2xl font-bold mb-6 text-center ${
+            theme === "dark" ? "text-green-300" : "text-green-700"
+          }`}
+        >
+          Book Appointment
+        </h2>
+        {error && (
+          <p className="text-red-600 text-center mb-4">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-green-600 text-center mb-4">
+            {success}
+          </p>
+        )}
         <textarea
-          type="text"
           name="symptoms"
           placeholder="Symptoms"
           value={formData.symptoms}
           onChange={handleChange}
-          className="w-full p-3 border border-green-300 rounded mb-4"
+          className={`w-full p-3 rounded mb-4 border ${
+            theme === "dark"
+              ? "bg-gray-700 text-gray-100 border-gray-600"
+              : "bg-white text-gray-900 border-green-300"
+          }`}
         />
-        
+
         {/* Specialty Dropdown */}
         <select
           name="specialty"
           value={selectedSpecialty}
           onChange={handleSpecialtyChange}
-          className="w-full p-3 border border-green-300 rounded mb-4"
+          className={`w-full p-3 rounded mb-4 border ${
+            theme === "dark"
+              ? "bg-gray-700 text-gray-100 border-gray-600"
+              : "bg-white text-gray-900 border-green-300"
+          }`}
         >
           <option value="">Select Specialty</option>
           {uniqueSpecialties.map((spec, idx) => (
@@ -215,14 +246,18 @@ const AppointmentForm = () => {
             </option>
           ))}
         </select>
-        
+
         {/* Doctor Name Dropdown based on selected specialty */}
         {selectedSpecialty && doctorList.length > 0 && (
           <select
             name="doctorId"
             value={formData.doctorId}
             onChange={handleDoctorChange}
-            className="w-full p-3 border border-green-300 rounded mb-4"
+            className={`w-full p-3 rounded mb-4 border ${
+              theme === "dark"
+                ? "bg-gray-700 text-gray-100 border-gray-600"
+                : "bg-white text-gray-900 border-green-300"
+            }`}
           >
             <option value="">Select Doctor</option>
             {doctorList.map((doctor) => (
@@ -239,17 +274,25 @@ const AppointmentForm = () => {
           name="date"
           value={formData.date}
           onChange={handleChange}
-          className={`w-full p-3 border border-green-300 rounded mb-4 ${(!formData.doctorId || !formData.doctorType) ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full p-3 rounded mb-4 border ${
+            theme === "dark"
+              ? "bg-gray-700 text-gray-100 border-gray-600"
+              : "bg-white text-gray-900 border-green-300"
+          } ${!formData.doctorId || !formData.doctorType ? "opacity-50 cursor-not-allowed" : ""}`}
         />
 
-        {/* If a date is selected */}
-        {formData.date && (
-          availableTimeSlots.length > 0 ? (
+        {/* Time Slot Selection */}
+        {formData.date &&
+          (availableTimeSlots.length > 0 ? (
             <select
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="w-full p-3 border border-green-300 rounded mb-4"
+              className={`w-full p-3 rounded mb-4 border ${
+                theme === "dark"
+                  ? "bg-gray-700 text-gray-100 border-gray-600"
+                  : "bg-white text-gray-900 border-green-300"
+              }`}
             >
               <option value="">Select Time Slot</option>
               {availableTimeSlots.map((time, idx) => (
@@ -259,13 +302,18 @@ const AppointmentForm = () => {
               ))}
             </select>
           ) : (
-            <p className="text-red-500 text-center mb-4">Doctor not available on this date</p>
-          )
-        )}
-        
-        <button 
-          type="submit" 
-          className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700 transition"
+            <p className="text-red-500 text-center mb-4">
+              Doctor not available on this date
+            </p>
+          ))}
+
+        <button
+          type="submit"
+          className={`w-full p-3 rounded transition ${
+            theme === "dark"
+              ? "bg-green-600 hover:bg-green-700 text-white"
+              : "bg-green-600 hover:bg-green-700 text-white"
+          }`}
         >
           Submit
         </button>

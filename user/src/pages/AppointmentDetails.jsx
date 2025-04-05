@@ -9,14 +9,14 @@ const AppointmentDetails = () => {
   const [resource, setResource] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  
+
   // Check if resource (feedback/quiz) already exists
   const [resourceExists, setResourceExists] = useState(false)
-  
+
   // Modal control state for resource submission and prescription viewing
   const [showResourceModal, setShowResourceModal] = useState(false)
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false)
-  
+
   // Define feedback questions for resource submission
   const feedbackQuestions = [
     { id: 1, question: "Do you have obesity?" },
@@ -24,11 +24,14 @@ const AppointmentDetails = () => {
     { id: 3, question: "Do you have high cholesterol?" },
     { id: 4, question: "Do you have diabetes?" },
   ]
-  
+
   // State to hold feedback answers
   const [feedbackAnswers, setFeedbackAnswers] = useState({})
   const [feedbackSuccess, setFeedbackSuccess] = useState("")
   const [feedbackError, setFeedbackError] = useState("")
+
+  // Read theme from localStorage
+  const theme = localStorage.getItem('theme') || 'light'
 
   // Fetch appointment details
   useEffect(() => {
@@ -122,33 +125,33 @@ const AppointmentDetails = () => {
   }
 
   return (
-    <div className="mx-auto p-6 bg-green-100 min-h-screen">
+    <div className={`mx-auto p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-green-100'} min-h-screen`}>
       {/* Appointment Details */}
-      <div className="bg-white max-w-3xl mx-auto rounded-lg shadow-lg p-6 mb-8 border border-green-200 relative">
-        <h2 className="text-3xl font-bold text-green-800 mb-4 text-center">
+      <div className={`max-w-3xl mx-auto rounded-lg shadow-lg p-6 mb-8 border relative ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border border-green-200'}`}>
+        <h2 className={`text-3xl font-bold text-center mb-4 ${theme === 'dark' ? 'text-green-300' : 'text-green-800'}`}>
           Appointment Details
         </h2>
         <p className="mb-2 text-lg">
-          <span className="font-semibold">Speciality:</span> {appointment.doctorType}
+          <span className={`${theme === 'dark' ? 'text-green-300' : 'text-green-800'}`}>Speciality:</span> <span className={`${theme === 'dark' ? 'text-green-200' : 'text-gray-900'}`}>{appointment?.doctorType}</span> 
         </p>
         <p className="mb-2 text-lg">
-          <span className="font-semibold">Doctor Name:</span> {appointment?.doctorId?.name || "N/A"}
+          <span className={`${theme === 'dark' ? 'text-green-300' : 'text-green-800'}`}>Doctor Name:</span> <span className={`${theme === 'dark' ? 'text-green-200' : 'text-gray-900'}`}>{appointment?.doctorId?.name || "N/A"}</span>
         </p>
         <p className="mb-2 text-lg">
-          <span className="font-semibold">Date:</span> {appointment.date}
+          <span className={`${theme === 'dark' ? 'text-green-300' : 'text-green-800'}`}>Date:</span> <span className={`${theme === 'dark' ? 'text-green-200' : 'text-gray-900'}`}>{appointment?.date}</span>
         </p>
         <p className="mb-2 text-lg">
-          <span className="font-semibold">Time:</span> {appointment.time}
+          <span className={`${theme === 'dark' ? 'text-green-300' : 'text-green-800'}`}>Time:</span> <span className={`${theme === 'dark' ? 'text-green-200' : 'text-gray-900'}`}>{appointment?.time}</span>
         </p>
         <p className="mb-2 text-lg">
-          <span className="font-semibold">Symptoms:</span> {appointment.symptoms}
+          <span className={`${theme === 'dark' ? 'text-green-300' : 'text-green-800'}`}>Symptoms:</span> <span className={`${theme === 'dark' ? 'text-green-200' : 'text-gray-900'}`}>{appointment?.symptoms}</span>
         </p>
         {/* Show See Prescription button within the appointment details card */}
         {appointment.prescriptionDetails && appointment.prescriptionDetails.length > 0 && (
           <div className="mt-6 text-center">
             <button
               onClick={() => setShowPrescriptionModal(true)}
-              className="w-full max-w-xs bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
+              className={`w-full max-w-xs ${theme === 'dark' ? 'bg-green-600' : 'bg-green-600'} text-white py-3 rounded hover:bg-green-700 transition`}
             >
               See Prescription
             </button>
@@ -177,15 +180,15 @@ const AppointmentDetails = () => {
 
       {/* Submitted Resource Details */}
       {resourceExists && resource && resource.quiz && resource.quiz.length > 0 && (
-        <div className="bg-white rounded-lg shadow-xl p-8 border border-green-200 mt-8">
-          <h3 className="text-2xl font-semibold text-green-700 mb-4 text-center">
+        <div className={`rounded-lg shadow-xl p-8 border mt-8 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border border-green-200'}`}>
+          <h3 className={`text-2xl font-semibold text-center mb-4 ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>
             Submitted Resource Details
           </h3>
           <div className="space-y-4">
             {resource.quiz.map((item, index) => (
-              <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-300">
-                <p className="font-semibold text-green-800">{item.question}</p>
-                <p className="ml-4 text-lg">
+              <div key={index} className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border border-green-200'}`}>
+                <p className={`text-lg font-semibold ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>{item.question}</p>
+                <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-800'}`}>
                   Answer: <span className="font-medium">
                     {item.answer.charAt(0).toUpperCase() + item.answer.slice(1)}
                   </span>
@@ -203,32 +206,32 @@ const AppointmentDetails = () => {
             className="absolute inset-0 bg-black opacity-50" 
             onClick={() => setShowPrescriptionModal(false)}
           ></div>
-          <div className="bg-white p-8 rounded-lg shadow-2xl z-10 max-w-3xl w-full border-t-4 border-green-600">
-            <h3 className="text-2xl font-bold mb-6 text-green-700 text-center">Prescription Details</h3>
+          <div className={`p-8 rounded-lg shadow-2xl z-10 max-w-3xl w-full border-t-4 ${theme === 'dark' ? 'bg-gray-800 border-green-600' : 'bg-white border-t-4 border-green-800'}`}>
+            <h3 className={`text-2xl font-bold mb-6 text-center ${theme === 'dark' ? 'text-green-500' : 'text-green-700'}`}>Prescription Details</h3>
             <table className="w-full table-auto border-collapse">
               <thead>
                 <tr>
-                  <th className="border p-2 bg-green-100">Medicine Name</th>
-                  <th className="border p-2 bg-green-100">Before Breakfast</th>
-                  <th className="border p-2 bg-green-100">After Breakfast</th>
-                  <th className="border p-2 bg-green-100">Before Lunch</th>
-                  <th className="border p-2 bg-green-100">After Lunch</th>
-                  <th className="border p-2 bg-green-100">Before Dinner</th>
-                  <th className="border p-2 bg-green-100">After Dinner</th>
-                  <th className="border p-2 bg-green-100">Duration</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>Medicine Name</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>Before Breakfast</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>After Breakfast</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>Before Lunch</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>After Lunch</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>Before Dinner</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>After Dinner</th>
+                  <th className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>Duration</th>
                 </tr>
               </thead>
               <tbody>
                 {appointment.prescriptionDetails.map((pres, index) => (
                   <tr key={index}>
-                    <td className="border p-2">{pres.medicineName}</td>
-                    <td className="border p-2 text-center">{displayYesNo(pres.beforeBreakfast)}</td>
-                    <td className="border p-2 text-center">{displayYesNo(pres.afterBreakfast)}</td>
-                    <td className="border p-2 text-center">{displayYesNo(pres.beforeLunch)}</td>
-                    <td className="border p-2 text-center">{displayYesNo(pres.afterLunch)}</td>
-                    <td className="border p-2 text-center">{displayYesNo(pres.beforeDinner)}</td>
-                    <td className="border p-2 text-center">{displayYesNo(pres.afterDinner)}</td>
-                    <td className="border p-2 text-center">{pres.duration}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{pres.medicineName}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{displayYesNo(pres.beforeBreakfast)}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{displayYesNo(pres.afterBreakfast)}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{displayYesNo(pres.beforeLunch)}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{displayYesNo(pres.afterLunch)}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{displayYesNo(pres.beforeDinner)}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{displayYesNo(pres.afterDinner)}</td>
+                    <td className={`border p-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-green-600 text-white'}`}>{pres.duration}</td>
                   </tr>
                 ))}
               </tbody>
@@ -252,12 +255,12 @@ const AppointmentDetails = () => {
             className="absolute inset-0 bg-black opacity-50" 
             onClick={() => setShowResourceModal(false)}
           ></div>
-          <div className="bg-white p-8 rounded-lg shadow-xl z-10 max-w-lg w-full">
-            <h3 className="text-2xl font-bold mb-6 text-green-700 text-center">Resource</h3>
+          <div className={`p-8 rounded-lg shadow-xl z-10 max-w-lg w-full ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+            <h3 className={`text-2xl font-bold mb-6 text-center ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>Resource</h3>
             <form onSubmit={handleFeedbackSubmit}>
               {feedbackQuestions.map((q) => (
                 <div key={q.id} className="mb-6">
-                  <p className="text-lg font-medium mb-2">{q.question}</p>
+                  <p className={`text-lg font-medium mb-2 ${theme === 'dark' ? 'text-green-300' : 'text-green-700' }`}>{q.question}</p>
                   <div className="flex space-x-6">
                     <label className="flex items-center">
                       <input
@@ -268,7 +271,7 @@ const AppointmentDetails = () => {
                         onChange={() => handleFeedbackChange(q.id, "yes")}
                         className="mr-2"
                       />
-                      <span className="text-lg">Yes</span>
+                      <span className={` text-lg ${theme === 'dark' ? 'text-green-300' : 'text-green-700' }`}>Yes</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -279,7 +282,7 @@ const AppointmentDetails = () => {
                         onChange={() => handleFeedbackChange(q.id, "no")}
                         className="mr-2"
                       />
-                      <span className="text-lg">No</span>
+                      <span className={` text-lg ${theme === 'dark' ? 'text-green-300' : 'text-green-700' }`}>No</span>
                     </label>
                   </div>
                 </div>
