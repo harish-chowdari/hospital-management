@@ -9,6 +9,8 @@ const ViewAppointments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const theme = localStorage.getItem("theme") || "light";
   
   // State to track which appointment is being edited
   const [editingId, setEditingId] = useState(null);
@@ -86,81 +88,97 @@ const ViewAppointments = () => {
   if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center text-green-600 mb-6">
+    <div
+      className={`max-w-7xl h-[91.5vh] overflow-y-auto mx-auto p-6 ${
+        theme === "dark" ? "bg-gray-900 text-gray-200" : "bg-white text-gray-800"
+      }`}
+    >
+      <h1
+        className={`text-3xl font-bold text-center mb-6 ${
+          theme === "dark" ? "text-green-400" : "text-green-600"
+        }`}
+      >
         My Appointments
       </h1>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-green-100">
+        <table
+          className={`min-w-full border ${
+            theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-white"
+          }`}
+        >
+          <thead className={`${theme === "dark" ? "bg-green-900" : "bg-green-100"}`}>
             <tr>
-              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
-                Symptoms
-              </th>
-              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
-                Date
-              </th>
-              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
-                Time
-              </th>
-              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
-                Patient Name
-              </th>
-              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
-                Edit
-              </th>
-              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
-                Delete
-              </th>
-              <th className="px-4 py-3 border-b text-left text-sm font-bold text-green-700">
-                View Details
-              </th>
+              {[
+                "Symptoms",
+                "Date",
+                "Time",
+                "Patient Name",
+                "Edit",
+                "Delete",
+                "View Details",
+              ].map((heading) => (
+                <th
+                  key={heading}
+                  className={`px-4 py-3 border-b ${
+                    theme === "dark" ? "border-gray-700 text-green-300" : "border-gray-200 text-green-700"
+                  } text-left text-sm font-bold`}
+                >
+                  {heading}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {appointments.map((appt) => (
-              <tr  key={appt?._id} className="hover:bg-green-50">
-                <td className="px-4 py-4 border-b text-sm text-gray-800">
-                  {appt?.symptoms}
+              <tr
+                key={appt._id}
+                className={`${theme === "dark" ? "hover:bg-gray-800" : "hover:bg-green-50"}`}
+              >
+                <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>
+                  {appt.symptoms}
                 </td>
-                <td className="px-4 py-4 border-b text-sm text-gray-800">
+                <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>
                   {editingId === appt._id ? (
                     <input
                       type="date"
                       value={editedDate}
                       onChange={(e) => setEditedDate(e.target.value)}
-                      className="border px-2 py-1 rounded"
+                      className={`border px-2 py-1 rounded ${
+                        theme === "dark" ? "bg-gray-700 text-white" : "bg-white text-gray-800"
+                      }`}
                     />
                   ) : (
-                    appt?.date
+                    appt.date
                   )}
                 </td>
-                <td className="px-4 py-4 border-b text-sm text-gray-800">
+                <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>
                   {editingId === appt._id ? (
                     <input
                       type="time"
                       value={editedTime}
                       onChange={(e) => setEditedTime(e.target.value)}
-                      className="border px-2 py-1 rounded"
+                      className={`border px-2 py-1 rounded ${
+                        theme === "dark" ? "bg-gray-700 text-white" : "bg-white text-gray-800"
+                      }`}
                     />
                   ) : (
-                    appt?.time
+                    appt.time
                   )}
                 </td>
-                <td className="px-4 py-4 border-b text-sm text-gray-800">
-                  {appt?.userId?.name}
+                <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>
+                  {appt.userId?.name}
                 </td>
-                <td className="px-4 py-4 border-b text-sm text-gray-800">
+                <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>
                   {editingId === appt._id ? (
                     <>
                       <button
-                        className="bg-green-500 cursor-pointer text-white px-3 py-1 rounded mr-2 hover:bg-green-600"
+                        className="bg-green-500 text-white px-3 py-1 rounded mr-2 hover:bg-green-600"
                         onClick={() => handleSave(appt._id)}
                       >
                         <FaSave />
                       </button>
                       <button
-                        className="bg-gray-500 cursor-pointer text-white px-3 py-1 rounded hover:bg-gray-600"
+                        className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
                         onClick={handleCancel}
                       >
                         <FaTimes />
@@ -168,25 +186,27 @@ const ViewAppointments = () => {
                     </>
                   ) : (
                     <button
-                      className="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-600"
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                       onClick={() => handleEditClick(appt)}
                     >
                       <FaEdit />
                     </button>
                   )}
                 </td>
-                <td className="px-4 py-4 border-b text-sm text-gray-800">
+                <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>
                   <button
-                    className="bg-red-500 cursor-pointer text-white px-4 py-2 rounded hover:bg-red-600"
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                     onClick={() => handleDelete(appt._id)}
                   >
                     <FaTrash />
                   </button>
                 </td>
-                <td className="px-4 py-4 border-b text-sm text-gray-800">
+                <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>
                   <button
-                    className="bg-green-500 cursor-pointer text-white px-4 py-2 rounded hover:bg-green-600"
-                    onClick={() => navigate(`/home/${adminId}/appointment-details/${appt._id}`)}
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    onClick={() =>
+                      navigate(`/home/${adminId}/appointment-details/${appt._id}`)
+                    }
                   >
                     View Details
                   </button>

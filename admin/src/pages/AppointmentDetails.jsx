@@ -10,6 +10,8 @@ const AppointmentDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const theme = localStorage.getItem("theme") || "light";
+
   // State for prescription modal
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
   const [prescriptionRows, setPrescriptionRows] = useState([
@@ -143,45 +145,53 @@ const AppointmentDetails = () => {
   }
 
   return (
-    <div className="mx-auto p-6 bg-green-100 min-h-screen">
+    <div className={`mx-auto p-6 ${theme === "dark" ? "bg-gray-900" : "bg-green-100"} min-h-screen`}>
       {/* Appointment Details Card */}
-      <div className="bg-white max-w-3xl mx-auto rounded-lg shadow-lg p-8 border border-green-200 relative">
-        <h2 className="text-3xl font-bold text-green-800 mb-6 text-center">
+      <div className={`max-w-3xl mx-auto rounded-lg shadow-lg p-8 relative ${theme === "dark" ? "bg-gray-800 border border-gray-700" : "bg-white border border-green-200"}`}>
+        <h2 className={`text-3xl font-bold mb-6 text-center ${theme === "dark" ? "text-green-400" : "text-green-800"}`}>
           Appointment Details
         </h2>
-        <p className="mb-2 text-lg">
+        <p className={`mb-2 text-lg ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
           <span className="font-semibold">Speciality:</span> {appointment.doctorType}
         </p>
-        <p className="mb-2 text-lg">
+        <p className={`mb-2 text-lg ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
           <span className="font-semibold">Doctor Name:</span> {appointment?.doctorId?.name || "N/A"}
         </p>
         <div className="flex justify-between mb-2">
-          <p className="text-lg"><span className="font-semibold">Date:</span> {appointment.date}</p>
-          <p className="text-lg"><span className="font-semibold">Time:</span> {appointment.time}</p>
+          <p className={`text-lg ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
+            <span className="font-semibold">Date:</span> {appointment.date}
+          </p>
+          <p className={`text-lg ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
+            <span className="font-semibold">Time:</span> {appointment.time}
+          </p>
         </div>
-        <p className="mb-2 text-lg">
+        <p className={`mb-2 text-lg ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
           <span className="font-semibold">Symptoms:</span> {appointment.symptoms}
         </p>
-        {/* If prescription exists, show See Prescription button here */}
+        {/* If prescription exists, show a message */}
         {appointment.prescriptionDetails && appointment.prescriptionDetails.length > 0 && (
-          <div className="mt-6 text-center text-gray-700">
+          <div className="mt-6 text-center">
+            <span className={theme === "dark" ? "text-gray-300" : "text-gray-700"}>
               Prescription Submitted
+            </span>
           </div>
         )}
       </div>
 
-      <div className="mt-8 bg-white max-w-3xl mx-auto rounded-lg shadow-lg p-8 border border-green-200">
-        <h3 className="text-2xl font-semibold text-green-700 mb-4 text-center">
+      {/* Resource Details Card */}
+      <div className={`mt-8 max-w-3xl mx-auto rounded-lg shadow-lg p-8 ${theme === "dark" ? "bg-gray-800 border border-gray-700" : "bg-white border border-green-200"}`}>
+        <h3 className={`text-2xl font-semibold mb-4 text-center ${theme === "dark" ? "text-green-400" : "text-green-700"}`}>
           Resource Details
         </h3>
         {resource && resource.quiz && resource.quiz.length > 0 ? (
           <div className="space-y-4">
             {resource.quiz.map((item, index) => (
-              <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-300">
-                <p className="font-semibold text-green-800">{`Does patient ${item.question.slice(7)}`}</p>
-                <p className="ml-4 text-lg">
-                  Answer:{" "}
-                  <span className="font-medium">
+              <div key={index} className={`p-4 rounded-lg ${theme === "dark" ? "bg-gray-700 border border-gray-600" : "bg-green-50 border border-green-300"}`}>
+                <p className={`font-semibold ${theme === "dark" ? "text-green-300" : "text-green-800"}`}>
+                  {`Does patient ${item.question.slice(7)}`}
+                </p>
+                <p className={`ml-4 text-lg ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
+                  Answer: <span className="font-medium">
                     {item.answer.charAt(0).toUpperCase() + item.answer.slice(1)}
                   </span>
                 </p>
@@ -189,7 +199,9 @@ const AppointmentDetails = () => {
             ))}
           </div>
         ) : (
-          <p className="text-lg text-gray-600 text-center">No resources found for this appointment.</p>
+          <p className={`text-lg text-center ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+            No resources found for this appointment.
+          </p>
         )}
       </div>
 
@@ -212,21 +224,22 @@ const AppointmentDetails = () => {
             className="absolute inset-0 bg-black opacity-50" 
             onClick={() => setShowPrescriptionModal(false)}
           ></div>
-          <div className="bg-white p-8 rounded-lg shadow-2xl z-10 max-w-4xl w-full border-t-4 border-green-600">
-            <h2 className="text-2xl font-bold mb-4 text-green-700 text-center">Prescription Details</h2>
+          <div className={`p-8 rounded-lg shadow-2xl z-10 max-w-4xl w-full border-t-4 border-green-600 ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
+            <h2 className={`text-2xl font-bold mb-4 text-center ${theme === "dark" ? "text-green-400" : "text-green-700"}`}>
+              Prescription Details
+            </h2>
             <div className="overflow-auto">
               <table className="w-full table-auto border-collapse">
                 <thead>
                   <tr>
-                    <th className="border p-2 bg-green-100">Medicine Name</th>
-                    <th className="border p-2 bg-green-100">Before Breakfast</th>
-                    <th className="border p-2 bg-green-100">After Breakfast</th>
-                    <th className="border p-2 bg-green-100">Before Lunch</th>
-                    <th className="border p-2 bg-green-100">After Lunch</th>
-                    <th className="border p-2 bg-green-100">Before Dinner</th>
-                    <th className="border p-2 bg-green-100">After Dinner</th>
-                    <th className="border p-2 bg-green-100">Duration</th>
-                    <th className="border p-2 bg-green-100">Action</th>
+                    {["Medicine Name", "Before Breakfast", "After Breakfast", "Before Lunch", "After Lunch", "Before Dinner", "After Dinner", "Duration", "Action"].map((heading) => (
+                      <th
+                        key={heading}
+                        className={`border p-2 ${theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-green-100 border-green-300"}`}
+                      >
+                        {heading}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -237,7 +250,7 @@ const AppointmentDetails = () => {
                           type="text"
                           value={row.medicineName}
                           onChange={(e) => handleRowChange(index, 'medicineName', e.target.value)}
-                          className="w-full border rounded p-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+                          className={`w-full border rounded p-1 focus:outline-none focus:ring-2 focus:ring-green-400 ${theme === "dark" ? "bg-gray-700 text-white" : "bg-white text-gray-800"}`}
                           placeholder="Medicine Name"
                         />
                       </td>
@@ -272,7 +285,7 @@ const AppointmentDetails = () => {
                           type="text"
                           value={row.duration}
                           onChange={(e) => handleRowChange(index, 'duration', e.target.value)}
-                          className="w-full border rounded p-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+                          className={`w-full border rounded p-1 focus:outline-none focus:ring-2 focus:ring-green-400 ${theme === "dark" ? "bg-gray-700 text-white" : "bg-white text-gray-800"}`}
                           placeholder="e.g., 5 days"
                         />
                       </td>

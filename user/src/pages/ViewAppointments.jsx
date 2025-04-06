@@ -34,7 +34,7 @@ const ViewAppointments = () => {
 
   return (
     <div
-      className={`max-w-7xl mx-auto h-[91.5vh] p-6 ${
+      className={`max-w-7xl mx-auto h-[91.5vh] overflow-y-auto p-6 ${
         theme === "dark" ? "bg-gray-900" : "bg-gray-100"
       }`}
     >
