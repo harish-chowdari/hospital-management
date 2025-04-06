@@ -181,6 +181,7 @@ const parseAppointmentDateTime = (dateStr, timeStr) => {
   // Create an ISO date string and return a Date object.
   // Example: "2025-03-31T18:00:00"
   const isoString = `${dateStr}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+  console.log(isoString);
   return new Date(isoString);
 };
 

@@ -20,7 +20,9 @@ const AppointmentForm = () => {
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
+  // Fixed time zone for consistent date handling
+  const timeZone = "America/New_York";
+  
   const theme = localStorage.getItem("theme") || "light";
 
   useEffect(() => {
@@ -77,17 +79,52 @@ const AppointmentForm = () => {
     fetchDoctorAvailability();
   }, [formData.doctorId]);
 
+  // Helper function to get the day of week in NY timezone from a date string
+  const getDayNameInNewYork = (dateString) => {
+    if (!dateString) return null;
+    
+    // Create a date object from the date string
+    // Add a default time to ensure consistent behavior
+    const fullDateString = `${dateString}T12:00:00`;
+    
+    // Format the date specifically to New York timezone to get the correct day
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timeZone,
+      weekday: 'long'
+    });
+    
+    // Get the formatted day name
+    const dayName = formatter.format(new Date(fullDateString));
+    
+    return dayName;
+  };
+
   // Update available time slots based on the selected date and doctor's availability
   useEffect(() => {
     if (formData.date && doctorAvailability) {
-      const dateObj = new Date(formData.date);
-      const dayIndex = dateObj.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const dayName = days[dayIndex];
+      // Get the day name in New York timezone
+      const dayName = getDayNameInNewYork(formData.date);
+      
+      // Debug information
+      console.log("Selected date:", formData.date);
+      console.log("New York day name:", dayName);
+      
+      // Format the date to see exact NY time for debugging
+      const nyDateStr = new Date(formData.date + "T12:00:00").toLocaleString('en-US', {
+        timeZone: timeZone,
+        dateStyle: 'full',
+        timeStyle: 'long'
+      });
+      console.log("Full NY datetime:", nyDateStr);
+      
+      console.log("Available days:", doctorAvailability.map(d => d.day));
+      
       const dayAvailability = doctorAvailability.find(item => item.day === dayName);
       if (dayAvailability && dayAvailability.slots.length > 0) {
+        console.log(`Found slots for ${dayName}:`, dayAvailability.slots);
         setAvailableTimeSlots(dayAvailability.slots);
       } else {
+        console.log(`No slots found for ${dayName}`);
         setAvailableTimeSlots([]);
       }
     } else {
@@ -185,6 +222,17 @@ const AppointmentForm = () => {
     }
   };
 
+  // Helper function to display current date and time in New York timezone for debugging
+  const displayCurrentNewYorkTime = () => {
+    const now = new Date();
+    const nyTimeStr = now.toLocaleString('en-US', {
+      timeZone: timeZone,
+      dateStyle: 'full',
+      timeStyle: 'long'
+    });
+    return nyTimeStr;
+  };
+
   return (
     <div
       className={`flex justify-center items-center min-h-[91.5vh] p-4 ${
@@ -206,6 +254,11 @@ const AppointmentForm = () => {
         >
           Book Appointment
         </h2>
+        {/* For debugging - can be removed in production */}
+        <p className={`text-xs mb-4 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+          {/* Current NY time: {displayCurrentNewYorkTime()} */}
+        </p>
+        
         {error && (
           <p className="text-red-600 text-center mb-4">
             {error}

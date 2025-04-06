@@ -19,6 +19,9 @@ const Profile = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // Retrieve theme from localStorage (default to 'light')
+  const theme = localStorage.getItem("theme") || "light";
+
   // Generate time options in 30-minute intervals from 8:00 AM to 6:00 PM
   const generateTimeOptions = () => {
     const options = [];
@@ -28,9 +31,13 @@ const Profile = () => {
     end.setHours(18, 0, 0, 0);
     let current = new Date(start);
     while (current <= end) {
-      options.push(
-        current.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      );
+      // Format the time with a fixed locale and options to match backend stored times.
+      const formattedTime = current.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      options.push(formattedTime);
       current = new Date(current.getTime() + 30 * 60000);
     }
     return options;
@@ -55,6 +62,7 @@ const Profile = () => {
             Saturday: [],
           };
           adminData.weeklyAvailability.forEach((item) => {
+            // Ensure the slots are in the same format as generated above.
             newAvailability[item.day] = item.slots || [];
           });
           setAvailability(newAvailability);
@@ -112,15 +120,19 @@ const Profile = () => {
   };
 
   if (loading) {
-    return <div className="p-4">Loading...</div>;
+    return (
+      <div className={`p-4 ${theme === "dark" ? "bg-gray-900 text-gray-200" : "bg-green-100 text-gray-800"}`}>
+        Loading...
+      </div>
+    );
   }
 
   return (
-    <div className="w-full p-6 bg-green-100 min-h-screen">
+    <div className={`w-full p-6 min-h-screen ${theme === "dark" ? "bg-gray-900 text-gray-200" : "bg-green-100 text-gray-800"}`}>
       {/* Admin Details */}
       {admin && (
-        <div className="bg-white shadow-md rounded p-6 mb-8 border border-green-300">
-          <h2 className="text-2xl font-bold mb-4 text-green-700">Profile Details</h2>
+        <div className={`shadow-md rounded p-6 mb-8 ${theme === "dark" ? "bg-gray-800 border border-gray-700" : "bg-white border border-green-300"}`}>
+          <h2 className={`text-2xl font-bold mb-4 ${theme === "dark" ? "text-green-400" : "text-green-700"}`}>Profile Details</h2>
           <p className="mb-2">
             <span className="font-semibold">Name:</span> {admin.name}
           </p>
@@ -136,24 +148,24 @@ const Profile = () => {
       {/* Availability Update Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg p-8 shadow-md border border-green-300"
+        className={`rounded-lg p-8 shadow-md ${theme === "dark" ? "bg-gray-800 border border-gray-700" : "bg-white border border-green-300"}`}
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
+        <h2 className={`text-2xl font-bold mb-6 text-center ${theme === "dark" ? "text-green-400" : "text-green-700"}`}>
           Update Weekly Availability
         </h2>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
+        {error && <p className={`text-center mb-4 ${theme === "dark" ? "text-red-400" : "text-red-500"}`}>{error}</p>}
+        {success && <p className={`text-center mb-4 ${theme === "dark" ? "text-green-400" : "text-green-500"}`}>{success}</p>}
 
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left column: Day Selection */}
           <div className="md:w-1/3">
-            <label className="block font-semibold mb-2 text-green-700">
+            <label className={`block font-semibold mb-2 ${theme === "dark" ? "text-green-400" : "text-green-700"}`}>
               Select Day
             </label>
             <select
               value={selectedDay}
               onChange={handleDayChange}
-              className="w-full p-3 border border-green-300 rounded"
+              className={`w-full p-3 rounded border ${theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "border-green-300"}`}
             >
               <option value="">Select Day</option>
               {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
@@ -166,7 +178,7 @@ const Profile = () => {
 
           {/* Right column: Time Slots */}
           <div className="md:w-2/3">
-            <label className="block font-semibold mb-2 text-green-700">
+            <label className={`block font-semibold mb-2 ${theme === "dark" ? "text-green-400" : "text-green-700"}`}>
               Available Slots
             </label>
             {selectedDay ? (
@@ -180,13 +192,13 @@ const Profile = () => {
                         onChange={() => handleCheckboxChange(time)}
                         className="form-checkbox h-4 w-4 text-green-600"
                       />
-                      <span className="ml-2 text-sm">{time}</span>
+                      <span className={`ml-2 text-sm ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>{time}</span>
                     </label>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">Please select a day to view slots.</p>
+              <p className="text-sm text-gray-600">Please select a day to view slots.</p>
             )}
           </div>
         </div>
