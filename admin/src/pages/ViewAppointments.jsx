@@ -148,7 +148,7 @@ const ViewAppointments = () => {
                       }`}
                     />
                   ) : (
-                    appt.date
+                    appt.date?.slice(0, 10)
                   )}
                 </td>
                 <td className={`px-4 py-4 border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} text-sm`}>

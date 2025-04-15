@@ -122,7 +122,7 @@ const ViewAppointments = () => {
                     theme === "dark" ? "text-gray-200" : "text-gray-800"
                   }`}
                 >
-                  {appt.date}
+                  {appt.date?.slice(0, 10)}
                 </td>
                 <td
                   className={`px-6 py-4 border-b text-sm ${

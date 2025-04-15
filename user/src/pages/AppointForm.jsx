@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../axios";
+import moment from "moment-timezone";
 
 const AppointmentForm = () => {
   const { userId } = useParams();
@@ -47,22 +48,28 @@ const AppointmentForm = () => {
       .then(r => setDoctorAvailability(r.data.weeklyAvailability || []));
   }, [formData.doctorId]);
 
-  const getDayNameUS = isoLocalDate => {
-    const d = new Date(isoLocalDate);
-    return new Intl.DateTimeFormat("en-US", {
+  const handleDateChange = e => {
+    const dateStr = e.target.value;
+    const mNY = moment.tz(dateStr, "YYYY-MM-DD", timeZone);
+    const isoUS = mNY.format(); 
+    console.log("US ISO Date:", isoUS);
+    setFormData({ ...formData, date: isoUS });
+  };
+
+  const getDayNameInNewYork = isoString =>
+    new Intl.DateTimeFormat("en-US", {
       timeZone,
       weekday: "long"
-    }).format(d);
-  };
+    }).format(new Date(isoString));
 
   useEffect(() => {
     if (!formData.date || !doctorAvailability) {
       setAvailableTimeSlots([]);
       return;
     }
-    const day = getDayNameUS(formData.date);
+    const dayName = getDayNameInNewYork(formData.date);
     const slots =
-      doctorAvailability.find(a => a.day === day)?.slots || [];
+      doctorAvailability.find(a => a.day === dayName)?.slots || [];
     setAvailableTimeSlots(slots);
   }, [formData.date, doctorAvailability]);
 
@@ -70,22 +77,8 @@ const AppointmentForm = () => {
     axiosInstance.get(`/get-appointments/${userId}`).then(r => setAppointments(r.data));
   }, []);
 
-  const handleChange = e => {
+  const handleChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleDateChange = e => {
-    const [y, m, d] = e.target.value.split("-").map(Number);
-    const dt = new Date(y, m - 1, d);
-    const offset = -dt.getTimezoneOffset();
-    const sign = offset >= 0 ? "+" : "-";
-    const pad = n => String(Math.abs(n)).padStart(2, "0");
-    const hh = pad(Math.floor(offset / 60));
-    const mm = pad(offset % 60);
-    const isoLocal = dt.toISOString().replace("Z", `${sign}${hh}:${mm}`);
-    console.log("Selected ISO Local Date:", isoLocal);
-    setFormData({ ...formData, date: isoLocal });
-  };
 
   const handleSpecialtyChange = e => {
     setSelectedSpecialty(e.target.value);
@@ -146,9 +139,9 @@ const AppointmentForm = () => {
   };
 
   return (
-    <div className={`flex justify-center items-center min-h-[91.5vh] p-4 ${theme === "dark" ? "bg-gray-900" : "bg-green-100"}`}>
-      <form onSubmit={handleSubmit} className={`rounded-lg p-8 shadow-md w-full max-w-xl border ${theme === "dark" ? "bg-gray-800 border-gray-700" : "bg-white border-green-300"}`}>
-        <h2 className={`text-2xl font-bold mb-6 text-center ${theme === "dark" ? "text-green-300" : "text-green-700"}`}>Book Appointment</h2>
+    <div className={`flex justify-center items-center min-h-[91.5vh] p-4 ${theme==="dark"?"bg-gray-900":"bg-green-100"}`}>
+      <form onSubmit={handleSubmit} className={`rounded-lg p-8 shadow-md w-full max-w-xl border ${theme==="dark"?"bg-gray-800 border-gray-700":"bg-white border-green-300"}`}>
+        <h2 className={`text-2xl font-bold mb-6 text-center ${theme==="dark"?"text-green-300":"text-green-700"}`}>Book Appointment</h2>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         {success && <p className="text-green-600 text-center mb-4">{success}</p>}
         <textarea
@@ -156,26 +149,26 @@ const AppointmentForm = () => {
           placeholder="Symptoms"
           value={formData.symptoms}
           onChange={handleChange}
-          className={`w-full p-3 rounded mb-4 border ${theme === "dark" ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-white text-gray-900 border-green-300"}`}
+          className={`w-full p-3 rounded mb-4 border ${theme==="dark"?"bg-gray-700 text-gray-100 border-gray-600":"bg-white text-gray-900 border-green-300"}`}
         />
         <select
           name="specialty"
           value={selectedSpecialty}
           onChange={handleSpecialtyChange}
-          className={`w-full p-3 rounded mb-4 border ${theme === "dark" ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-white text-gray-900 border-green-300"}`}
+          className={`w-full p-3 rounded mb-4 border ${theme==="dark"?"bg-gray-700 text-gray-100 border-gray-600":"bg-white text-gray-900 border-green-300"}`}
         >
           <option value="">Select Specialty</option>
-          {uniqueSpecialties.map((s, i) => <option key={i} value={s}>{s}</option>)}
+          {uniqueSpecialties.map((s,i)=><option key={i} value={s}>{s}</option>)}
         </select>
-        {doctorList.length > 0 && (
+        {doctorList.length>0 && (
           <select
             name="doctorId"
             value={formData.doctorId}
             onChange={handleDoctorChange}
-            className={`w-full p-3 rounded mb-4 border ${theme === "dark" ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-white text-gray-900 border-green-300"}`}
+            className={`w-full p-3 rounded mb-4 border ${theme==="dark"?"bg-gray-700 text-gray-100 border-gray-600":"bg-white text-gray-900 border-green-300"}`}
           >
             <option value="">Select Doctor</option>
-            {doctorList.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
+            {doctorList.map(d=> <option key={d._id} value={d._id}>{d.name}</option>)}
           </select>
         )}
         <input
@@ -183,23 +176,21 @@ const AppointmentForm = () => {
           type="date"
           name="date"
           onChange={handleDateChange}
-          className={`w-full p-3 rounded mb-4 border ${theme === "dark" ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-white text-gray-900 border-green-300"} ${!formData.doctorId ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full p-3 rounded mb-4 border ${theme==="dark"?"bg-gray-700 text-gray-100 border-gray-600":"bg-white text-gray-900 border-green-300"} ${!formData.doctorId?"opacity-50 cursor-not-allowed":""}`}
         />
-        {formData.date && (
-          availableTimeSlots.length > 0 ? (
-            <select
-              name="time"
-              value={formData.time}
-              onChange={handleChange}
-              className={`w-full p-3 rounded mb-4 border ${theme === "dark" ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-white text-gray-900 border-green-300"}`}
-            >
-              <option value="">Select Time Slot</option>
-              {availableTimeSlots.map((t, i) => <option key={i} value={t}>{t}</option>)}
-            </select>
-          ) : (
-            <p className="text-red-500 text-center mb-4">Doctor not available on this date</p>
-          )
-        )}
+        {formData.date && (availableTimeSlots.length>0 ? (
+          <select
+            name="time"
+            value={formData.time}
+            onChange={handleChange}
+            className={`w-full p-3 rounded mb-4 border ${theme==="dark"?"bg-gray-700 text-gray-100 border-gray-600":"bg-white text-gray-900 border-green-300"}`}
+          >
+            <option value="">Select Time Slot</option>
+            {availableTimeSlots.map((t,i)=><option key={i} value={t}>{t}</option>)}
+          </select>
+        ) : (
+          <p className="text-red-500 text-center mb-4">Doctor not available on this date</p>
+        ))}
         <button type="submit" className="w-full p-3 rounded bg-green-600 hover:bg-green-700 text-white transition">Submit</button>
       </form>
     </div>
