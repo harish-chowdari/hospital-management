@@ -173,9 +173,9 @@ const transporter = nodemailer.createTransport({
 const parseAppointmentDateTime = (dateStr, timeStr) => {
   const [time, period] = timeStr.split(" ");
   let [hours, minutes] = time.split(":").map(Number);
-  if (period.toUpperCase() === "PM" && hours !== 12) {
+  if (period?.toUpperCase() === "PM" && hours !== 12) {
     hours += 12;
-  } else if (period.toUpperCase() === "AM" && hours === 12) {
+  } else if (period?.toUpperCase() === "AM" && hours === 12) {
     hours = 0;
   }
   // Create an ISO date string and return a Date object.
@@ -200,7 +200,7 @@ const sendAppointmentReminders = async () => {
 
     appointments.forEach(async (appointment) => {
       // Parse the appointment's date and time
-      const appointmentDateTime = parseAppointmentDateTime(appointment.date, appointment.time);
+      const appointmentDateTime = parseAppointmentDateTime(appointment?.date, appointment?.time);
 
       const diffMs = appointmentDateTime - now;
       const diffHours = diffMs / (1000 * 60 * 60);

@@ -17,6 +17,6 @@ router.get('/get-appointment/:appointmentId', getAppointmentByAppointmentId);
 router.put('/update-appointment/:appointmentId', updateAppointment);
 router.delete('/delete-appointment/:appointmentId', deleteAppointment);
 router.post('/add-prescription/:appointmentId', addPrescription);
-
+ 
 
 module.exports = router;
